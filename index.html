@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Am I Cooked? 🔥 | The Ultimate Exam Survival Calculator</title>
+    <meta name="description" content="Find out exactly how doomed you are before your exam. An interactive, funny diagnostic tool with live roast engine, survival plans, and excuses.">
+    
+    <!-- Skeleton / Skull Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💀</text></svg>">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Background Canvas & Animated Mesh Lights -->
+    <div class="mesh-bg">
+        <div class="mesh-orb orb-1"></div>
+        <div class="mesh-orb orb-2"></div>
+        <div class="mesh-orb orb-3"></div>
+    </div>
+    <canvas id="ember-canvas"></canvas>
+
+    <!-- Top Live Status & Nav Bar -->
+    <div class="top-nav-container">
+        <div class="top-nav">
+            <div class="brand">
+                <span class="brand-flame">🔥</span>
+                <span class="brand-text">AM I COOKED?</span>
+                <span class="brand-version">v3.0</span>
+            </div>
+
+            <!-- Live Cooked Preview Indicator -->
+            <div class="live-preview-pill" id="live-meter-pill">
+                <span class="pill-dot"></span>
+                <span class="pill-text">LIVE LEVEL:</span>
+                <span class="pill-value" id="live-level-val">WARM 45%</span>
+            </div>
+
+            <div class="nav-actions">
+                <button id="sound-btn" class="nav-btn sound-toggle active" type="button" title="Toggle Sound & Voice">
+                    <span id="sound-icon">🔊</span>
+                    <span id="sound-text">AUDIO ON</span>
+                </button>
+                <button id="procrastinate-btn" class="nav-btn procrastinate-btn" type="button">
+                    <span>💀</span>
+                    <span>I'M PROCRASTINATING</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- POLISHED LIVE ACTIVITY TICKER -->
+    <div class="ticker-wrapper">
+        <div class="ticker-prefix">
+            <span class="live-recording-dot"></span>
+            <span class="ticker-title">LIVE ROAST FEED</span>
+        </div>
+        <div class="ticker-viewport">
+            <div class="ticker-track" id="live-ticker-track">
+                <!-- Injected via JavaScript for seamless loop & dynamic updates -->
+            </div>
+        </div>
+    </div>
+
+    <div class="main-wrapper">
+        <!-- HERO SECTION -->
+        <header class="hero-section">
+            <div class="hero-badge">
+                <span class="badge-flame-icon">⚡</span>
+                <span>ACADEMIC CRISIS DIAGNOSTIC SIMULATOR</span>
+            </div>
+            
+            <h1 class="hero-headline">
+                HOW <span class="gradient-text">COOKED</span> ARE YOU?
+            </h1>
+            
+            <p class="hero-description">
+                Input your exam date, syllabus weight, and study progress to calculate your exact survival odds with live voice commentary.
+            </p>
+            <p class="hero-tagline">"100% scientific. 0% judgement. High probability of emotional damage." 💀</p>
+        </header>
+
+        <!-- MAIN INTERACTIVE CALCULATOR CARD -->
+        <main class="card-container" id="calculator-form">
+            <!-- 01 EXAM DATE -->
+            <div class="input-card">
+                <div class="card-header">
+                    <div class="step-badge">01</div>
+                    <div class="header-text">
+                        <label for="exam-date" class="step-title">When is your exam?</label>
+                        <span class="step-subtitle">The clock is actively ticking against you</span>
+                    </div>
+                </div>
+                <div class="date-row">
+                    <input type="date" id="exam-date" class="date-picker-input" required>
+                    <div class="countdown-card" id="countdown-card">
+                        <span class="countdown-pulse"></span>
+                        <div class="countdown-details">
+                            <span class="countdown-number" id="countdown-text">7 DAYS LEFT</span>
+                            <span class="countdown-sub" id="countdown-sub">168 HOURS REMAINING</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="roast-badge" id="roast-date">"Panic window is officially open 🔥"</div>
+            </div>
+
+            <!-- 02 SYLLABUS SIZE -->
+            <div class="input-card">
+                <div class="card-header">
+                    <div class="step-badge">02</div>
+                    <div class="header-text">
+                        <span class="step-title">How massive is the syllabus?</span>
+                        <span class="step-subtitle">Be honest. Denial won't reduce chapter counts</span>
+                    </div>
+                </div>
+                <div class="grid-options syllabus-grid">
+                    <div class="choice-card syllabus-choice" data-value="small">
+                        <div class="choice-icon-wrap icon-green">🟢</div>
+                        <div class="choice-content">
+                            <div class="choice-name">Small</div>
+                            <div class="choice-desc">Just a few slides / topics</div>
+                        </div>
+                    </div>
+                    <div class="choice-card syllabus-choice active" data-value="medium">
+                        <div class="choice-icon-wrap icon-gold">🟡</div>
+                        <div class="choice-content">
+                            <div class="choice-name">Medium</div>
+                            <div class="choice-desc">Standard midterm / final scope</div>
+                        </div>
+                    </div>
+                    <div class="choice-card syllabus-choice" data-value="large">
+                        <div class="choice-icon-wrap icon-orange">🟠</div>
+                        <div class="choice-content">
+                            <div class="choice-name">Large</div>
+                            <div class="choice-desc">Heavy textbook chapters</div>
+                        </div>
+                    </div>
+                    <div class="choice-card syllabus-choice" data-value="massive">
+                        <div class="choice-icon-wrap icon-red">🔴</div>
+                        <div class="choice-content">
+                            <div class="choice-name">Massive 💀</div>
+                            <div class="choice-desc">Everything taught this semester</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="roast-badge" id="roast-syllabus">"Standard academic pain. Manageable if you lock in."</div>
+            </div>
+
+            <!-- 03 STUDY PROGRESS -->
+            <div class="input-card">
+                <div class="card-header">
+                    <div class="step-badge">03</div>
+                    <div class="header-text">
+                        <span class="step-title">How much have you studied so far?</span>
+                        <span class="step-subtitle">Reading the table of contents does not count</span>
+                    </div>
+                </div>
+                
+                <div class="slider-box">
+                    <div class="slider-top-row">
+                        <div class="slider-display">
+                            <span class="slider-pct" id="study-percent-text">25%</span>
+                            <span class="slider-label">STUDIED</span>
+                        </div>
+                        <div class="slider-status-quote" id="study-quote">"I've seen the syllabus."</div>
+                    </div>
+                    
+                    <div class="slider-track-wrap">
+                        <input type="range" id="study-slider" min="0" max="100" step="5" value="25" class="heat-range-slider">
+                    </div>
+                    
+                    <div class="preset-row">
+                        <button type="button" class="preset-btn" data-pct="0">0% 💀</button>
+                        <button type="button" class="preset-btn active" data-pct="25">25% 👀</button>
+                        <button type="button" class="preset-btn" data-pct="50">50% 📈</button>
+                        <button type="button" class="preset-btn" data-pct="75">75% 📚</button>
+                        <button type="button" class="preset-btn" data-pct="100">100% 🗿</button>
+                    </div>
+                </div>
+                <div class="roast-badge" id="roast-study">"You read the table of contents. Proud of you 👏"</div>
+            </div>
+
+            <!-- 04 BASICS KNOWLEDGE -->
+            <div class="input-card">
+                <div class="card-header">
+                    <div class="step-badge">04</div>
+                    <div class="header-text">
+                        <span class="step-title">Do you actually understand the fundamentals?</span>
+                        <span class="step-subtitle">Can you explain chapter 1 to a 5-year-old?</span>
+                    </div>
+                </div>
+                <div class="grid-options basics-grid">
+                    <div class="choice-card basics-choice" data-value="none">
+                        <div class="choice-icon-wrap icon-red">❌</div>
+                        <div class="choice-content">
+                            <div class="choice-name">Not really</div>
+                            <div class="choice-desc">Starting from literal zero</div>
+                        </div>
+                    </div>
+                    <div class="choice-card basics-choice active" data-value="little">
+                        <div class="choice-icon-wrap icon-gold">😐</div>
+                        <div class="choice-content">
+                            <div class="choice-name">A little</div>
+                            <div class="choice-desc">Vague memories from lectures</div>
+                        </div>
+                    </div>
+                    <div class="choice-card basics-choice" data-value="yes">
+                        <div class="choice-icon-wrap icon-green">✅</div>
+                        <div class="choice-content">
+                            <div class="choice-name">Yes, I understand</div>
+                            <div class="choice-desc">Solid grasp of core concepts</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="roast-badge" id="roast-basics">"Vibes and guesswork mode active 🎲"</div>
+            </div>
+
+            <!-- 05 DAILY STUDY CAPACITY -->
+            <div class="input-card">
+                <div class="card-header">
+                    <div class="step-badge">05</div>
+                    <div class="header-text">
+                        <span class="step-title">Daily study capacity (Realistically)</span>
+                        <span class="step-subtitle">Subtract time for food, sleep, and TikTok scrolling</span>
+                    </div>
+                </div>
+                
+                <div class="slider-box">
+                    <div class="slider-top-row">
+                        <div class="slider-display">
+                            <span class="slider-pct" id="hours-text">4 hrs / day</span>
+                            <span class="slider-label">STUDY TIME</span>
+                        </div>
+                        <div class="slider-status-quote" id="hours-quote">Solid effort 💪</div>
+                    </div>
+                    
+                    <div class="slider-track-wrap">
+                        <input type="range" id="hours-slider" min="0" max="12" step="0.5" value="4" class="heat-range-slider">
+                    </div>
+                    
+                    <div class="ticks-row">
+                        <span>0h (Dangerous 💀)</span>
+                        <span>3h (Light ☕)</span>
+                        <span>6h (Solid 💪)</span>
+                        <span>9h (Weapon ⚔️)</span>
+                        <span>12h (Bot 🤖)</span>
+                    </div>
+                </div>
+                <div class="roast-badge" id="roast-hours">"Respectable effort. Let's see if your stamina holds up ☕"</div>
+            </div>
+
+            <!-- PRIMARY SUBMIT CTA -->
+            <div class="cta-container">
+                <button type="button" id="calculate-btn" class="epic-calculate-btn">
+                    <span class="btn-shine"></span>
+                    <span class="btn-text-content">
+                        <span>CALCULATE: AM I COOKED?</span>
+                        <span class="btn-fire-icon">🔥</span>
+                    </span>
+                </button>
+            </div>
+
+            <!-- EMERGENCY EXCUSE GENERATOR WIDGET -->
+            <div class="excuse-widget">
+                <div class="excuse-widget-header">
+                    <div class="excuse-title-block">
+                        <span class="excuse-emoji">📝</span>
+                        <div>
+                            <span class="excuse-main-title">EMERGENCY PROFESSOR EXCUSE GENERATOR</span>
+                            <span class="excuse-sub-title">Certified 100% believable excuses for exam delays</span>
+                        </div>
+                    </div>
+                    
+                    <div class="excuse-btn-group">
+                        <button type="button" id="excuse-btn" class="action-btn generate-btn">
+                            <span>Generate Excuse</span>
+                            <span>🎲</span>
+                        </button>
+                        <button type="button" id="copy-excuse-btn" class="action-btn copy-btn" title="Copy to clipboard">
+                            <span>📋</span>
+                            <span>Copy</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="excuse-speech-bubble" id="excuse-bubble">
+                    <p class="excuse-message" id="excuse-display">"Click 'Generate Excuse 🎲' to get an emergency excuse for your professor..."</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- DRAMATIC RESULT SCREEN (Visible after calculation) -->
+        <section class="result-dashboard hidden" id="result-screen">
+            <!-- Result Header Banner -->
+            <div class="verdict-banner">
+                <span class="verdict-status-tag">DIAGNOSTIC REPORT FINALIZED</span>
+                
+                <!-- Circular Cooked Meter -->
+                <div class="meter-outer-ring">
+                    <div class="meter-halo-glow" id="meter-halo"></div>
+                    <svg class="meter-svg-element" viewBox="0 0 220 220">
+                        <circle class="meter-track-bg" cx="110" cy="110" r="90"></circle>
+                        <circle class="meter-fill-stroke" id="meter-circle" cx="110" cy="110" r="90" stroke-dasharray="565.48" stroke-dashoffset="565.48"></circle>
+                    </svg>
+                    <div class="meter-center-info">
+                        <span class="meter-fire-badge" id="meter-fire">🔥</span>
+                        <div class="meter-number-text" id="meter-score-text">0%</div>
+                        <span class="meter-sublabel">COOKED SCORE</span>
+                    </div>
+                </div>
+
+                <h2 class="verdict-headline" id="verdict-title">CALCULATING...</h2>
+                <p class="verdict-subheadline" id="verdict-subtitle">Analyzing workload density against panic thresholds...</p>
+
+                <!-- Dedicated AI Voice Note Roast Box -->
+                <div class="voice-roast-card" id="voice-roast-box">
+                    <div class="voice-header-row">
+                        <div class="voice-indicator">
+                            <span class="voice-icon">🎙️</span>
+                            <span class="voice-tag">AI VOICE ROAST:</span>
+                            <div class="soundwave" id="soundwave-anim">
+                                <span class="bar bar-1"></span>
+                                <span class="bar bar-2"></span>
+                                <span class="bar bar-3"></span>
+                                <span class="bar bar-4"></span>
+                                <span class="bar bar-5"></span>
+                            </div>
+                        </div>
+                        <button type="button" id="replay-voice-btn" class="replay-btn" title="Replay Voice Note">
+                            <span>🔁</span> <span>Replay Voice</span>
+                        </button>
+                    </div>
+                    <p class="voice-transcript" id="voice-transcript-text">"Analyzing your academic fate..."</p>
+                </div>
+
+                <!-- Daily Motivational Quote -->
+                <div class="quote-card">
+                    <span class="quote-spark">💡</span>
+                    <p class="quote-text" id="motivational-quote">"Lock in. The academic comeback starts now."</p>
+                </div>
+            </div>
+
+            <!-- Key Metrics Grid -->
+            <div class="metrics-dashboard-grid">
+                <div class="metric-box">
+                    <div class="metric-icon-wrap">📅</div>
+                    <div class="metric-data">
+                        <span class="metric-val" id="summary-days">0 days</span>
+                        <span class="metric-name">Time Remaining</span>
+                    </div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-icon-wrap">📚</div>
+                    <div class="metric-data">
+                        <span class="metric-val" id="summary-syllabus">75%</span>
+                        <span class="metric-name">Syllabus Uncovered</span>
+                    </div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-icon-wrap">🧠</div>
+                    <div class="metric-data">
+                        <span class="metric-val" id="summary-basics">A little</span>
+                        <span class="metric-name">Foundational Basics</span>
+                    </div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-icon-wrap">⏰</div>
+                    <div class="metric-data">
+                        <span class="metric-val" id="summary-hours">4 hrs/day</span>
+                        <span class="metric-name">Study Capacity</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Survival Plan Checklist -->
+            <div class="survival-protocol-card">
+                <div class="protocol-header">
+                    <span class="protocol-icon">📋</span>
+                    <div>
+                        <h3 class="protocol-title">YOUR EMERGENCY SURVIVAL PROTOCOL</h3>
+                        <span class="protocol-sub">Custom tailored plan to avoid academic catastrophe</span>
+                    </div>
+                </div>
+                <ul class="protocol-checklist" id="survival-plan-list">
+                    <!-- Dynamic Survival Bullet Items -->
+                </ul>
+            </div>
+
+            <!-- Result Actions (Retry & Share) -->
+            <div class="result-button-row">
+                <button type="button" id="retry-btn" class="result-action-btn recalculate-btn">
+                    <span>🔥 RECALCULATE / TRY AGAIN</span>
+                </button>
+                <button type="button" id="share-btn" class="result-action-btn share-score-btn">
+                    <span>📋 SHARE MY COOKED SCORE</span>
+                </button>
+            </div>
+
+            <!-- Quick Study Timer / Lock-In Pomodoro Widget -->
+            <div class="lockin-card">
+                <div class="lockin-left">
+                    <span class="lockin-flame">⏱️</span>
+                    <div>
+                        <div class="lockin-title">READY TO LOCK IN RIGHT NOW?</div>
+                        <div class="lockin-sub">Start a 25-minute emergency focus session</div>
+                    </div>
+                </div>
+                <div class="lockin-right">
+                    <span class="timer-digits" id="timer-display">25:00</span>
+                    <button type="button" id="timer-toggle-btn" class="timer-btn">START SPRINT 🚀</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="site-footer">
+            <p>Made for students burning the midnight oil ☕ | Powered by pure adrenaline & caffeine.</p>
+        </footer>
+    </div>
+
+    <!-- PROCRASTINATION EASTER EGG MODAL -->
+    <div class="modal-overlay hidden" id="procrastinate-modal">
+        <div class="modal-box">
+            <div class="modal-skull-icon">💀</div>
+            <h3 class="modal-heading">Bro...</h3>
+            <p class="modal-punchline">You are literally using this website instead of studying 💀</p>
+            <p class="modal-explanation">Every second spent clicking this button is a chapter unread and a grade point lost.</p>
+            <div class="modal-action-wrap">
+                <button type="button" id="close-modal-btn" class="modal-study-btn">
+                    Okay fine. I'm locking in now →
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="floating-toast hidden" id="toast-notification">
+        <span class="toast-emoji">📋</span>
+        <span id="toast-message">Copied share text to clipboard!</span>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
