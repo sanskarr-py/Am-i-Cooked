@@ -651,7 +651,7 @@ document.addEventListener('DOMContentLoaded', () => {
         "Solar flares corrupted my short-term memory during my cram session ☀️🧠",
         "I had a staring contest with my textbook and unfortunately lost 👁️📚",
         "My cat walked across my keyboard and submitted an unfinished draft into the void 🐱💻",
-        "I was mentally calculating my cooked score on am-i-cooked.com and passed out 💀",
+        "I was mentally calculating my cooked score on am-i-cooked-ten.vercel.app and passed out 💀",
         "I accidentally fell asleep doing active recall in my lucid dreams 💤",
         "A sudden surge of emotional damage rendered me unable to open PDF files 💔",
         "My alarm clock decided to update its firmware at 7:00 AM sharp ⏰📱",
@@ -1106,7 +1106,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     shareBtn.addEventListener('click', () => {
         playSound('excuse');
-        const shareText = `I am ${state.calculatedScore}% COOKED 🔥 for my exam in ${state.daysLeft} days!\nCalculate your score on am-i-cooked.com 💀`;
+        const shareText = `I am ${state.calculatedScore}% COOKED 🔥 for my exam in ${state.daysLeft} days!\nCalculate your score on am-i-cooked-ten.vercel.app 💀`;
 
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(shareText).then(() => {

@@ -1,6 +1,7 @@
 # Am I Cooked? 🔥
 
-> **The Ultimate Exam Survival Calculator** — Find out exactly how doomed you are before your exam. 💀
+> **The Ultimate Exam Survival Calculator** — Find out exactly how doomed you are before your exam. 💀  
+> 🔗 Live App: [am-i-cooked-ten.vercel.app](https://am-i-cooked-ten.vercel.app/)
 
 ![Am I Cooked Preview](https://img.shields.io/badge/Status-100%25%20Scientific-ff5c38?style=for-the-badge)
 ![Built With](https://img.shields.io/badge/Built%20With-Vanilla%20HTML%20%7C%20CSS%20%7C%20JS-fbb03b?style=for-the-badge)
