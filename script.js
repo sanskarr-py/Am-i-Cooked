@@ -1158,4 +1158,474 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initial Live Preview computation
     updateLivePreview();
+
+    // ----------------------------------------------------------------------
+    // 15. NEW FEATURE MODULES
+    // ----------------------------------------------------------------------
+
+    // A. INSTANT SUBJECT PRESETS
+    const presetData = {
+        ochem: { days: 2, syllabus: 'massive', studied: 15, basics: 'none', hours: 8 },
+        calc2: { days: 4, syllabus: 'large', studied: 30, basics: 'little', hours: 6 },
+        cs_algo: { days: 5, syllabus: 'medium', studied: 40, basics: 'little', hours: 5 },
+        physics: { days: 3, syllabus: 'large', studied: 20, basics: 'none', hours: 7 },
+        anatomy: { days: 1, syllabus: 'massive', studied: 10, basics: 'none', hours: 10 },
+        law: { days: 3, syllabus: 'massive', studied: 35, basics: 'little', hours: 9 }
+    };
+
+    const subjectChips = document.querySelectorAll('.subject-chip');
+    subjectChips.forEach(chip => {
+        chip.addEventListener('click', () => {
+            playSound('click');
+            const key = chip.dataset.subject;
+            const data = presetData[key];
+            if (!data) return;
+
+            subjectChips.forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+
+            // Set Date
+            const targetDate = new Date();
+            targetDate.setDate(targetDate.getDate() + data.days);
+            dateInput.valueAsDate = targetDate;
+            state.examDate = targetDate;
+            state.daysLeft = data.days;
+            countdownText.textContent = `${data.days} DAY${data.days === 1 ? '' : 'S'} LEFT`;
+            countdownSub.textContent = `${data.days * 24} HOURS REMAINING`;
+
+            // Set Syllabus
+            state.syllabusSize = data.syllabus;
+            document.querySelectorAll('.syllabus-choice').forEach(sc => {
+                sc.classList.toggle('active', sc.dataset.value === data.syllabus);
+            });
+
+            // Set Study Slider
+            state.studiedPercent = data.studied;
+            studySlider.value = data.studied;
+            studyPercentText.textContent = `${data.studied}%`;
+            document.querySelectorAll('.preset-btn').forEach(pb => {
+                pb.classList.toggle('active', parseInt(pb.dataset.pct) === data.studied);
+            });
+
+            // Set Basics
+            state.basicsKnowledge = data.basics;
+            document.querySelectorAll('.basics-choice').forEach(bc => {
+                bc.classList.toggle('active', bc.dataset.value === data.basics);
+            });
+
+            // Set Hours
+            state.dailyHours = data.hours;
+            hoursSlider.value = data.hours;
+            hoursText.textContent = `${data.hours} hrs / day`;
+
+            updateLivePreview();
+            showToast(`Loaded ${chip.textContent.trim()} preset! 🎯`);
+        });
+    });
+
+    // B. PROCEDURAL PANIC ROOM FOCUS AMBIENT AUDIO (WEB AUDIO API)
+    let ambientAudioCtx = null;
+    let currentAmbientNode = null;
+    let ambientSoundType = null;
+    const ambientBtn = document.getElementById('ambient-btn');
+    const ambientCard = document.getElementById('ambient-sound-card');
+    const ambientChips = document.querySelectorAll('.ambient-chip');
+    const ambientStopBtn = document.getElementById('ambient-stop-btn');
+    const ambientEq = document.getElementById('ambient-eq');
+
+    function initAmbientAudio() {
+        if (!ambientAudioCtx) {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            ambientAudioCtx = new AudioCtx();
+        }
+        if (ambientAudioCtx.state === 'suspended') {
+            ambientAudioCtx.resume();
+        }
+    }
+
+    function stopAmbientSound() {
+        if (currentAmbientNode) {
+            try {
+                if (currentAmbientNode.stop) currentAmbientNode.stop();
+                if (currentAmbientNode.disconnect) currentAmbientNode.disconnect();
+            } catch (e) {}
+            currentAmbientNode = null;
+        }
+        ambientSoundType = null;
+        if (ambientEq) ambientEq.classList.remove('playing');
+        ambientChips.forEach(c => c.classList.remove('active'));
+    }
+
+    function playAmbientSound(type) {
+        initAmbientAudio();
+        stopAmbientSound();
+        ambientSoundType = type;
+
+        if (ambientEq) ambientEq.classList.add('playing');
+
+        const ctx = ambientAudioCtx;
+        const gainNode = ctx.createGain();
+        gainNode.gain.value = 0.15;
+        gainNode.connect(ctx.destination);
+
+        if (type === 'rain') {
+            const bufferSize = 2 * ctx.sampleRate;
+            const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = Math.random() * 2 - 1;
+            }
+
+            const whiteNoise = ctx.createBufferSource();
+            whiteNoise.buffer = noiseBuffer;
+            whiteNoise.loop = true;
+
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.value = 1000;
+
+            whiteNoise.connect(filter);
+            filter.connect(gainNode);
+            whiteNoise.start();
+            currentAmbientNode = whiteNoise;
+
+        } else if (type === 'cafe') {
+            const bufferSize = ctx.sampleRate;
+            const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            for (let i = 0; i < bufferSize; i++) {
+                output[i] = (Math.random() * 2 - 1) * 0.4;
+            }
+
+            const src = ctx.createBufferSource();
+            src.buffer = noiseBuffer;
+            src.loop = true;
+
+            const filter = ctx.createBiquadFilter();
+            filter.type = 'bandpass';
+            filter.frequency.value = 800;
+
+            src.connect(filter);
+            filter.connect(gainNode);
+            src.start();
+            currentAmbientNode = src;
+
+        } else if (type === 'binaural') {
+            const oscL = ctx.createOscillator();
+            const oscR = ctx.createOscillator();
+            const merger = ctx.createChannelMerger(2);
+
+            oscL.frequency.value = 200;
+            oscR.frequency.value = 210;
+
+            oscL.connect(merger, 0, 0);
+            oscR.connect(merger, 0, 1);
+            merger.connect(gainNode);
+
+            oscL.start();
+            oscR.start();
+
+            currentAmbientNode = {
+                stop: () => { oscL.stop(); oscR.stop(); },
+                disconnect: () => { oscL.disconnect(); oscR.disconnect(); }
+            };
+
+        } else if (type === 'lofi') {
+            const freqs = [130.81, 164.81, 196.00];
+            const oscs = freqs.map(f => {
+                const osc = ctx.createOscillator();
+                osc.type = 'sine';
+                osc.frequency.value = f;
+                osc.connect(gainNode);
+                osc.start();
+                return osc;
+            });
+
+            currentAmbientNode = {
+                stop: () => oscs.forEach(o => o.stop()),
+                disconnect: () => oscs.forEach(o => o.disconnect())
+            };
+        }
+    }
+
+    if (ambientBtn) {
+        ambientBtn.addEventListener('click', () => {
+            playSound('click');
+            if (ambientCard) ambientCard.scrollIntoView({ behavior: 'smooth' });
+        });
+    }
+
+    ambientChips.forEach(chip => {
+        if (chip.classList.contains('sound-stop')) return;
+        chip.addEventListener('click', () => {
+            playSound('click');
+            const sound = chip.dataset.sound;
+            ambientChips.forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            playAmbientSound(sound);
+        });
+    });
+
+    if (ambientStopBtn) {
+        ambientStopBtn.addEventListener('click', () => {
+            playSound('click');
+            stopAmbientSound();
+        });
+    }
+
+    // C. CRAM VS SLEEP MATRIX SIMULATOR
+    const sleepSlider = document.getElementById('sleep-slider');
+    const sleepHrsText = document.getElementById('sleep-hrs-text');
+    const alertnessVal = document.getElementById('alertness-val');
+    const retentionVal = document.getElementById('retention-val');
+    const sleepRiskVal = document.getElementById('sleep-risk-val');
+    const sleepVerdictText = document.getElementById('sleep-verdict-text');
+
+    if (sleepSlider) {
+        sleepSlider.addEventListener('input', () => {
+            const sleepHrs = parseFloat(sleepSlider.value);
+            const cramHrs = (8 - sleepHrs).toFixed(1);
+
+            sleepHrsText.textContent = `${sleepHrs.toFixed(1)} Hours Sleep / ${cramHrs} Hours Cram`;
+
+            let alertness = Math.min(100, Math.round(sleepHrs * 12 + (sleepHrs >= 6 ? 10 : 0)));
+            let retention = Math.min(100, Math.round(35 + sleepHrs * 7.5));
+            let risk = "MODERATE ☕";
+            let riskColor = "color-amber";
+            let verdict = "";
+
+            if (sleepHrs === 0) {
+                alertness = 15;
+                retention = 35;
+                risk = "CATASTROPHIC 💀";
+                riskColor = "color-red";
+                verdict = "0h Sleep: Hallucination territory. 45% probability of forgetting your own name during exam.";
+            } else if (sleepHrs <= 2.5) {
+                alertness = 35;
+                retention = 50;
+                risk = "DANGER ZONE 🔥";
+                riskColor = "color-red";
+                verdict = "2.5h Sleep: Heavy brain fog. Enough sleep to feel groggy, not enough to function.";
+            } else if (sleepHrs <= 4.5) {
+                alertness = 60;
+                retention = 70;
+                risk = "HIGH RISK ⚠️";
+                riskColor = "color-amber";
+                verdict = "4.5h Sleep: Minimum viable core sleep cycle. Survival odds moderate with espresso.";
+            } else if (sleepHrs <= 6.5) {
+                alertness = 82;
+                retention = 88;
+                risk = "HEALTHY ☕";
+                riskColor = "color-gold";
+                verdict = "6.0h Sleep: Solid balance! Good memory consolidation without total exhaustion.";
+            } else {
+                alertness = 98;
+                retention = 96;
+                risk = "OPTIMAL 🗿";
+                riskColor = "color-green";
+                verdict = "8.0h Sleep: Maximum cognitive peak performance. Lock in and execute!";
+            }
+
+            alertnessVal.textContent = `${alertness}%`;
+            retentionVal.textContent = `${retention}%`;
+            sleepRiskVal.textContent = risk;
+            sleepRiskVal.className = `analytics-val ${riskColor}`;
+            sleepVerdictText.textContent = `"${verdict}"`;
+        });
+    }
+
+    // D. GRADE SAVER FINAL EXAM SCORE CALCULATOR
+    const currentGradeInput = document.getElementById('current-grade-input');
+    const targetGradeInput = document.getElementById('target-grade-input');
+    const examWeightInput = document.getElementById('exam-weight-input');
+    const requiredScoreVal = document.getElementById('required-score-val');
+    const gradeVerdictQuote = document.getElementById('grade-verdict-quote');
+
+    function calculateRequiredGrade() {
+        if (!currentGradeInput || !targetGradeInput || !examWeightInput) return;
+
+        const current = parseFloat(currentGradeInput.value) || 0;
+        const target = parseFloat(targetGradeInput.value) || 0;
+        const weightPct = parseFloat(examWeightInput.value) || 1;
+
+        const w = weightPct / 100;
+        const required = (target - (current * (1 - w))) / w;
+        const reqRounded = Math.round(required * 10) / 10;
+
+        requiredScoreVal.textContent = `${reqRounded}%`;
+
+        if (reqRounded > 100) {
+            requiredScoreVal.style.background = "#e11d48";
+            requiredScoreVal.style.color = "#fff";
+            gradeVerdictQuote.textContent = '"Impossible without extra credit 💀 Pray for a massive curve."';
+        } else if (reqRounded > 85) {
+            requiredScoreVal.style.background = "#fbbf24";
+            requiredScoreVal.style.color = "#000";
+            gradeVerdictQuote.textContent = '"Brutal requirement. You need to practically ace this final!"';
+        } else if (reqRounded > 60) {
+            requiredScoreVal.style.background = "#10b981";
+            requiredScoreVal.style.color = "#064e3b";
+            gradeVerdictQuote.textContent = '"Doable! A solid B/C on the final saves your grade."';
+        } else {
+            requiredScoreVal.style.background = "#38bdf8";
+            requiredScoreVal.style.color = "#0c4a6e";
+            gradeVerdictQuote.textContent = '"You could literally take this exam half-asleep and pass 🗿"';
+        }
+    }
+
+    [currentGradeInput, targetGradeInput, examWeightInput].forEach(inp => {
+        if (inp) inp.addEventListener('input', calculateRequiredGrade);
+    });
+
+    // E. DELUSION REALITY CHECK QUIZ
+    const delusionBtn = document.getElementById('delusion-btn');
+    const delusionModal = document.getElementById('delusion-modal');
+    const closeDelusionBtn = document.getElementById('close-delusion-btn');
+    const delusionCbs = document.querySelectorAll('.delusion-cb');
+    const delusionPctText = document.getElementById('delusion-pct');
+    const delusionVerdictText = document.getElementById('delusion-verdict');
+
+    if (delusionBtn) {
+        delusionBtn.addEventListener('click', () => {
+            playSound('modal');
+            delusionModal.classList.remove('hidden');
+        });
+    }
+
+    if (closeDelusionBtn) {
+        closeDelusionBtn.addEventListener('click', () => {
+            playSound('click');
+            delusionModal.classList.add('hidden');
+        });
+    }
+
+    if (delusionModal) {
+        delusionModal.addEventListener('click', (e) => {
+            if (e.target === delusionModal) delusionModal.classList.add('hidden');
+        });
+    }
+
+    delusionCbs.forEach(cb => {
+        cb.addEventListener('change', () => {
+            playSound('click');
+            let sum = 0;
+            delusionCbs.forEach(c => {
+                if (c.checked) sum += parseInt(c.value);
+            });
+
+            delusionPctText.textContent = `${sum}%`;
+
+            if (sum === 0) {
+                delusionVerdictText.textContent = '"Pure academic sanity. Impressive 🗿"';
+            } else if (sum <= 35) {
+                delusionVerdictText.textContent = '"Mild academic cope. Stay vigilant 👀"';
+            } else if (sum <= 65) {
+                delusionVerdictText.textContent = '"Dangerously delusional. You\'re actively lying to yourself 🤡"';
+            } else {
+                delusionVerdictText.textContent = '"WEAPONIZED DELUSION! You\'re cooked beyond human repair 💀"';
+            }
+        });
+    });
+
+    // F. DOWNLOAD OFFICIAL COOKED CARD (PNG CANVAS GENERATOR)
+    const downloadCardBtn = document.getElementById('download-card-btn');
+    const cardCanvas = document.getElementById('cooked-card-canvas');
+
+    if (downloadCardBtn && cardCanvas) {
+        downloadCardBtn.addEventListener('click', () => {
+            playSound('excuse');
+            const ctx = cardCanvas.getContext('2d');
+            const w = cardCanvas.width;
+            const h = cardCanvas.height;
+
+            // Background
+            const grad = ctx.createLinearGradient(0, 0, w, h);
+            grad.addColorStop(0, '#08070e');
+            grad.addColorStop(0.5, '#141120');
+            grad.addColorStop(1, '#08070e');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, w, h);
+
+            // Glowing Outer Border
+            ctx.strokeStyle = '#ff5c38';
+            ctx.lineWidth = 6;
+            ctx.strokeRect(15, 15, w - 30, h - 30);
+
+            // Header Banner
+            ctx.fillStyle = '#ff5c38';
+            ctx.font = '900 24px Montserrat, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.fillText('🔥 AM I COOKED? - ACADEMIC CRISIS REPORT 🔥', w / 2, 60);
+
+            ctx.fillStyle = '#94a3b8';
+            ctx.font = '600 14px Inter, sans-serif';
+            ctx.fillText('OFFICIAL DIAGNOSTIC VERDICT CARD', w / 2, 85);
+
+            // Circular Meter Circle
+            const centerX = w / 2;
+            const centerY = 210;
+            const radius = 80;
+
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+            ctx.fillStyle = 'rgba(255, 92, 56, 0.1)';
+            ctx.fill();
+            ctx.lineWidth = 10;
+            ctx.strokeStyle = state.calculatedScore > 70 ? '#e11d48' : (state.calculatedScore > 40 ? '#fbbf24' : '#10b981');
+            ctx.stroke();
+
+            // Score Text
+            ctx.fillStyle = '#ffffff';
+            ctx.font = '900 48px Space Grotesk, sans-serif';
+            ctx.fillText(`${state.calculatedScore}%`, centerX, centerY + 14);
+
+            ctx.fillStyle = '#cbd5e1';
+            ctx.font = '700 12px Inter, sans-serif';
+            ctx.fillText('COOKED SCORE', centerX, centerY + 36);
+
+            // Verdict Title
+            ctx.fillStyle = state.currentVerdict ? state.currentVerdict.color : '#ff5c38';
+            ctx.font = '900 32px Montserrat, sans-serif';
+            ctx.fillText(state.currentVerdict ? state.currentVerdict.title : 'WARM', w / 2, 330);
+
+            // Verdict Subtitle
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = '600 16px Inter, sans-serif';
+            const sub = state.currentVerdict ? state.currentVerdict.subtitle : 'Workload under control.';
+            ctx.fillText(`"${sub.slice(0, 55)}"`, w / 2, 365);
+
+            // Metrics Box
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.05)';
+            ctx.fillRect(80, 400, w - 160, 110);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(80, 400, w - 160, 110);
+
+            ctx.fillStyle = '#cbd5e1';
+            ctx.font = '600 14px Inter, sans-serif';
+            ctx.textAlign = 'left';
+            ctx.fillText(`📅 Time Left: ${state.daysLeft} Days`, 110, 435);
+            ctx.fillText(`📚 Syllabus: ${state.syllabusSize.toUpperCase()}`, 110, 465);
+            ctx.fillText(`🧠 Fundamentals: ${state.basicsKnowledge.toUpperCase()}`, 110, 495);
+
+            ctx.fillText(`⏰ Daily Capacity: ${state.dailyHours} hrs/day`, 440, 435);
+            ctx.fillText(`⚡ Audio Roast: GENERATED`, 440, 465);
+            ctx.fillText(`🗿 Status: LOCKED IN`, 440, 495);
+
+            // Footer Stamp
+            ctx.fillStyle = '#64748b';
+            ctx.font = '600 12px Geist Mono, monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(`CERTIFIED 100% SCIENTIFIC • am-i-cooked-ten.vercel.app • ${new Date().toLocaleDateString()}`, w / 2, 555);
+
+            // Trigger Download
+            const dataUrl = cardCanvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = `am-i-cooked-${state.calculatedScore}pct.png`;
+            link.href = dataUrl;
+            link.click();
+
+            showToast("Downloaded Official Cooked Card PNG! 📸");
+        });
+    }
 });

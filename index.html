@@ -45,6 +45,14 @@
                     <span id="sound-icon">🔊</span>
                     <span id="sound-text">AUDIO ON</span>
                 </button>
+                <button id="ambient-btn" class="nav-btn ambient-toggle" type="button" title="Toggle Panic Room Ambient Focus Audio">
+                    <span>🎧</span>
+                    <span id="ambient-text">FOCUS AUDIO</span>
+                </button>
+                <button id="delusion-btn" class="nav-btn delusion-toggle" type="button" title="Academic Delusion Reality Check">
+                    <span>🤡</span>
+                    <span>DELUSION CHECK</span>
+                </button>
                 <button id="procrastinate-btn" class="nav-btn procrastinate-btn" type="button">
                     <span>💀</span>
                     <span>I'M PROCRASTINATING</span>
@@ -86,6 +94,25 @@
 
         <!-- MAIN INTERACTIVE CALCULATOR CARD -->
         <main class="card-container" id="calculator-form">
+            <!-- INSTANT SUBJECT PRESETS -->
+            <div class="preset-subject-card">
+                <div class="preset-subject-header">
+                    <span class="preset-subject-icon">🎯</span>
+                    <div>
+                        <span class="preset-subject-title">INSTANT COURSE PRESETS</span>
+                        <span class="preset-subject-sub">Quick-load parameters for notorious academic nightmare subjects</span>
+                    </div>
+                </div>
+                <div class="preset-chip-row">
+                    <button type="button" class="subject-chip" data-subject="ochem">🧪 Organic Chem 💀</button>
+                    <button type="button" class="subject-chip" data-subject="calc2">📐 Calculus II 📈</button>
+                    <button type="button" class="subject-chip" data-subject="cs_algo">💻 Data Structures 💻</button>
+                    <button type="button" class="subject-chip" data-subject="physics">⚡ Physics II ⚡</button>
+                    <button type="button" class="subject-chip" data-subject="anatomy">🩺 Anatomy 🩺</button>
+                    <button type="button" class="subject-chip" data-subject="law">⚖️ Law School ⚖️</button>
+                </div>
+            </div>
+
             <!-- 01 EXAM DATE -->
             <div class="input-card">
                 <div class="card-header">
@@ -253,6 +280,99 @@
                 <div class="roast-badge" id="roast-hours">"Respectable effort. Let's see if your stamina holds up ☕"</div>
             </div>
 
+            <!-- PANIC ROOM AMBIENT SOUND PLAYER -->
+            <div class="ambient-sound-card" id="ambient-sound-card">
+                <div class="ambient-header">
+                    <div class="ambient-title-wrap">
+                        <span class="ambient-icon">🎧</span>
+                        <div>
+                            <span class="ambient-title">PANIC ROOM FOCUS AUDIO</span>
+                            <span class="ambient-sub">Procedurally generated acoustic focus soundscapes to keep you locked in</span>
+                        </div>
+                    </div>
+                    <div class="ambient-equalizer" id="ambient-eq">
+                        <span class="eq-bar bar-1"></span>
+                        <span class="eq-bar bar-2"></span>
+                        <span class="eq-bar bar-3"></span>
+                        <span class="eq-bar bar-4"></span>
+                    </div>
+                </div>
+                <div class="ambient-options">
+                    <button type="button" class="ambient-chip active" data-sound="rain">🌧️ Heavy Rain</button>
+                    <button type="button" class="ambient-chip" data-sound="cafe">☕ Coffee Shop</button>
+                    <button type="button" class="ambient-chip" data-sound="binaural">🪐 Binaural Focus</button>
+                    <button type="button" class="ambient-chip" data-sound="lofi">⚡ Synthwave Hum</button>
+                    <button type="button" class="ambient-chip sound-stop" id="ambient-stop-btn">🛑 Stop</button>
+                </div>
+            </div>
+
+            <!-- CRAM VS SLEEP MATRIX -->
+            <div class="sleep-cram-widget">
+                <div class="widget-header-badge">
+                    <span class="widget-icon">😴⚡</span>
+                    <div>
+                        <h3 class="widget-title">ALL-NIGHTER CRAM VS SLEEP SIMULATOR</h3>
+                        <span class="widget-sub">Should you sleep 6 hours or cram until sunrise? Calculate your retention penalty</span>
+                    </div>
+                </div>
+                <div class="sleep-slider-container">
+                    <div class="slider-top-row">
+                        <span class="slider-label">PLANNED SLEEP:</span>
+                        <span class="slider-pct" id="sleep-hrs-text">3.0 Hours Sleep / 5.0 Hours Cram</span>
+                    </div>
+                    <div class="slider-track-wrap">
+                        <input type="range" id="sleep-slider" min="0" max="8" step="0.5" value="3" class="heat-range-slider">
+                    </div>
+                </div>
+                <div class="sleep-analytics-grid">
+                    <div class="analytics-card">
+                        <span class="analytics-title">🧠 Cognitive Alertness</span>
+                        <span class="analytics-val color-amber" id="alertness-val">55%</span>
+                    </div>
+                    <div class="analytics-card">
+                        <span class="analytics-title">📚 Memory Retention</span>
+                        <span class="analytics-val color-gold" id="retention-val">68%</span>
+                    </div>
+                    <div class="analytics-card">
+                        <span class="analytics-title">💀 All-Nighter Risk</span>
+                        <span class="analytics-val color-red" id="sleep-risk-val">HIGH RISK</span>
+                    </div>
+                </div>
+                <div class="roast-badge" id="sleep-verdict-text">"3 hours is the danger zone: enough sleep to feel groggy, not enough to function."</div>
+            </div>
+
+            <!-- GRADE SAVER & MINIMUM EXAM SCORE CALCULATOR -->
+            <div class="grade-saver-widget">
+                <div class="widget-header-badge">
+                    <span class="widget-icon">📊</span>
+                    <div>
+                        <h3 class="widget-title">GRADE SAVER: FINAL EXAM SCORE CALCULATOR</h3>
+                        <span class="widget-sub">Find out exactly what % you need on the final to pass or get your target grade</span>
+                    </div>
+                </div>
+                <div class="grade-input-grid">
+                    <div class="grade-field">
+                        <label for="current-grade-input">Current Grade (%):</label>
+                        <input type="number" id="current-grade-input" min="0" max="100" value="68" placeholder="e.g. 68">
+                    </div>
+                    <div class="grade-field">
+                        <label for="target-grade-input">Target Final Grade (%):</label>
+                        <input type="number" id="target-grade-input" min="0" max="100" value="70" placeholder="e.g. 70 (Pass)">
+                    </div>
+                    <div class="grade-field">
+                        <label for="exam-weight-input">Final Exam Weight (%):</label>
+                        <input type="number" id="exam-weight-input" min="1" max="100" value="30" placeholder="e.g. 30">
+                    </div>
+                </div>
+                <div class="grade-result-box" id="grade-result-box">
+                    <div class="grade-target-needed">
+                        <span class="grade-label">REQUIRED ON FINAL EXAM:</span>
+                        <span class="grade-val-badge" id="required-score-val">74.7%</span>
+                    </div>
+                    <p class="grade-verdict-quote" id="grade-verdict-quote">"Doable! You just need a solid B on the final."</p>
+                </div>
+            </div>
+
             <!-- PRIMARY SUBMIT CTA -->
             <div class="cta-container">
                 <button type="button" id="calculate-btn" class="epic-calculate-btn">
@@ -390,13 +510,16 @@
                 </ul>
             </div>
 
-            <!-- Result Actions (Retry & Share) -->
+            <!-- Result Actions (Retry, Share, & Download PNG Card) -->
             <div class="result-button-row">
                 <button type="button" id="retry-btn" class="result-action-btn recalculate-btn">
                     <span>🔥 RECALCULATE / TRY AGAIN</span>
                 </button>
                 <button type="button" id="share-btn" class="result-action-btn share-score-btn">
                     <span>📋 SHARE MY COOKED SCORE</span>
+                </button>
+                <button type="button" id="download-card-btn" class="result-action-btn download-card-btn">
+                    <span>📸 DOWNLOAD COOKED CARD (PNG)</span>
                 </button>
             </div>
 
@@ -436,6 +559,52 @@
             </div>
         </div>
     </div>
+
+    <!-- DELUSION REALITY CHECK MODAL -->
+    <div class="modal-overlay hidden" id="delusion-modal">
+        <div class="modal-box delusion-box">
+            <div class="modal-skull-icon">🤡</div>
+            <h3 class="modal-heading">Academic Delusion Reality Check</h3>
+            <p class="modal-explanation">Select all habits you have engaged in within the past 48 hours:</p>
+            
+            <div class="delusion-checklist">
+                <label class="delusion-item">
+                    <input type="checkbox" value="25" class="delusion-cb">
+                    <span>Bought highlighters/notebooks assuming it counts as studying 🎨</span>
+                </label>
+                <label class="delusion-item">
+                    <input type="checkbox" value="20" class="delusion-cb">
+                    <span>Watched 3 hours of lecture videos on 2x speed without notes 🏎️</span>
+                </label>
+                <label class="delusion-item">
+                    <input type="checkbox" value="25" class="delusion-cb">
+                    <span>Said "I'll just wake up at 4:30 AM and finish chapter 4" ⏰</span>
+                </label>
+                <label class="delusion-item">
+                    <input type="checkbox" value="15" class="delusion-cb">
+                    <span>Opened TikTok for "5 minutes break" and lost 2 hours 📱</span>
+                </label>
+                <label class="delusion-item">
+                    <input type="checkbox" value="15" class="delusion-cb">
+                    <span>Deep-cleaned your bedroom/desk to avoid opening the PDF 🧹</span>
+                </label>
+            </div>
+
+            <div class="delusion-score-display" id="delusion-score-display">
+                <div class="delusion-score-num">DELUSION INDEX: <strong id="delusion-pct">0%</strong></div>
+                <p class="delusion-verdict" id="delusion-verdict">"Looking sane... for now."</p>
+            </div>
+
+            <div class="modal-action-wrap">
+                <button type="button" id="close-delusion-btn" class="modal-study-btn">
+                    Close Check & Lock In 🔒
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- OFFSCREEN CANVAS FOR PNG CARD GENERATION -->
+    <canvas id="cooked-card-canvas" width="800" height="600" style="display:none;"></canvas>
 
     <!-- TOAST NOTIFICATION -->
     <div class="floating-toast hidden" id="toast-notification">

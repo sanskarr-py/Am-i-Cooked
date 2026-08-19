@@ -1580,6 +1580,404 @@ body {
     display: none !important;
 }
 
+/* ==========================================================================
+   NEW FEATURES: PRESETS, FOCUS AUDIO, CRAM/SLEEP, GRADE SAVER, DELUSION
+   ========================================================================== */
+
+/* 1. INSTANT SUBJECT PRESETS TOOLBAR */
+.preset-subject-card {
+    background: rgba(18, 16, 26, 0.85);
+    border: var(--border-highlight);
+    border-radius: var(--radius-xl);
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    backdrop-filter: blur(16px);
+    transition: var(--transition-smooth);
+}
+
+.preset-subject-card:hover {
+    border-color: rgba(255, 92, 56, 0.4);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.preset-subject-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 14px;
+}
+
+.preset-subject-icon {
+    font-size: 1.6rem;
+    background: rgba(251, 176, 59, 0.15);
+    border: 1px solid rgba(251, 176, 59, 0.3);
+    padding: 6px 10px;
+    border-radius: var(--radius-md);
+}
+
+.preset-subject-title {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 800;
+    color: #fff;
+    letter-spacing: 0.5px;
+    display: block;
+}
+
+.preset-subject-sub {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.preset-chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.subject-chip {
+    background: rgba(255, 255, 255, 0.04);
+    border: var(--border-subtle);
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 14px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.subject-chip:hover {
+    background: rgba(255, 92, 56, 0.15);
+    border-color: var(--coral-flame);
+    color: #fff;
+    transform: translateY(-2px);
+}
+
+.subject-chip.active {
+    background: linear-gradient(135deg, rgba(255, 92, 56, 0.35), rgba(255, 51, 102, 0.35));
+    border-color: var(--coral-flame);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(255, 92, 56, 0.3);
+}
+
+/* 2. PANIC ROOM FOCUS AUDIO WIDGET */
+.ambient-sound-card {
+    background: rgba(18, 16, 26, 0.85);
+    border: 1px solid rgba(167, 139, 250, 0.25);
+    border-radius: var(--radius-xl);
+    padding: 22px 24px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(16px);
+}
+
+.ambient-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.ambient-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ambient-icon {
+    font-size: 1.6rem;
+}
+
+.ambient-title {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #c4b5fd;
+    display: block;
+}
+
+.ambient-sub {
+    font-size: 0.82rem;
+    color: var(--text-dim);
+}
+
+.ambient-equalizer {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 18px;
+}
+
+.eq-bar {
+    width: 3px;
+    background: var(--lavender-frost);
+    border-radius: 2px;
+    height: 6px;
+    transition: height 0.2s ease;
+}
+
+.ambient-equalizer.playing .eq-bar {
+    animation: eqPulse 0.8s ease-in-out infinite alternate;
+}
+
+.ambient-equalizer.playing .bar-1 { animation-delay: 0.1s; }
+.ambient-equalizer.playing .bar-2 { animation-delay: 0.3s; }
+.ambient-equalizer.playing .bar-3 { animation-delay: 0.2s; }
+.ambient-equalizer.playing .bar-4 { animation-delay: 0.4s; }
+
+@keyframes eqPulse {
+    0% { height: 4px; }
+    100% { height: 18px; }
+}
+
+.ambient-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.ambient-chip {
+    background: rgba(255, 255, 255, 0.04);
+    border: var(--border-subtle);
+    color: var(--text-secondary);
+    font-family: var(--font-body);
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: var(--transition-fast);
+}
+
+.ambient-chip:hover {
+    background: rgba(167, 139, 250, 0.2);
+    border-color: var(--lavender-frost);
+    color: #fff;
+}
+
+.ambient-chip.active {
+    background: var(--lavender-frost);
+    color: #0e0c18;
+    border-color: var(--lavender-frost);
+    font-weight: 800;
+    box-shadow: 0 4px 14px rgba(167, 139, 250, 0.4);
+}
+
+.ambient-chip.sound-stop {
+    background: rgba(225, 29, 72, 0.15);
+    border-color: rgba(225, 29, 72, 0.4);
+    color: #fda4af;
+}
+
+/* 3. CRAM VS SLEEP MATRIX */
+.sleep-cram-widget {
+    background: rgba(18, 16, 26, 0.85);
+    border: 1px solid rgba(56, 189, 248, 0.25);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    margin-bottom: 24px;
+    backdrop-filter: blur(16px);
+}
+
+.sleep-slider-container {
+    margin: 18px 0;
+}
+
+.sleep-analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 16px 0;
+}
+
+.analytics-card {
+    background: rgba(0, 0, 0, 0.35);
+    border: var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    text-align: center;
+}
+
+.analytics-title {
+    font-size: 0.78rem;
+    color: var(--text-dim);
+    display: block;
+    margin-bottom: 6px;
+}
+
+.analytics-val {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 900;
+}
+
+.color-amber { color: var(--amber-glow); }
+.color-gold { color: var(--champagne-gold); }
+.color-red { color: var(--crimson-fire); }
+.color-green { color: var(--cyber-emerald); }
+
+/* 4. GRADE SAVER CALCULATOR */
+.grade-saver-widget {
+    background: rgba(18, 16, 26, 0.85);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    border-radius: var(--radius-xl);
+    padding: 24px;
+    margin-bottom: 28px;
+    backdrop-filter: blur(16px);
+}
+
+.grade-input-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+    margin: 18px 0;
+}
+
+.grade-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.grade-field label {
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+}
+
+.grade-field input {
+    background: rgba(0, 0, 0, 0.4);
+    border: var(--border-highlight);
+    border-radius: var(--radius-md);
+    padding: 12px 14px;
+    color: #fff;
+    font-family: var(--font-mono);
+    font-size: 1rem;
+    outline: none;
+    transition: var(--transition-fast);
+}
+
+.grade-field input:focus {
+    border-color: var(--cyber-emerald);
+    box-shadow: 0 0 14px rgba(16, 185, 129, 0.3);
+}
+
+.grade-result-box {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px dashed rgba(16, 185, 129, 0.35);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.grade-target-needed {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.grade-label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--text-secondary);
+}
+
+.grade-val-badge {
+    background: var(--cyber-emerald);
+    color: #064e3b;
+    font-family: var(--font-mono);
+    font-size: 1.35rem;
+    font-weight: 900;
+    padding: 4px 14px;
+    border-radius: var(--radius-md);
+}
+
+.grade-verdict-quote {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #a7f3d0;
+    font-style: italic;
+}
+
+/* 5. DOWNLOAD PNG CARD BUTTON */
+.download-card-btn {
+    background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+    box-shadow: 0 8px 24px rgba(56, 189, 248, 0.35);
+}
+
+.download-card-btn:hover {
+    box-shadow: 0 12px 30px rgba(56, 189, 248, 0.55);
+}
+
+/* 6. DELUSION CHECK MODAL & CHECKLIST */
+.delusion-box {
+    max-width: 520px;
+}
+
+.delusion-checklist {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: left;
+    margin: 18px 0;
+}
+
+.delusion-item {
+    background: rgba(255, 255, 255, 0.04);
+    border: var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    transition: var(--transition-fast);
+}
+
+.delusion-item:hover {
+    background: rgba(255, 92, 56, 0.1);
+    border-color: rgba(255, 92, 56, 0.3);
+}
+
+.delusion-cb {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--coral-flame);
+    cursor: pointer;
+}
+
+.delusion-score-display {
+    background: rgba(0, 0, 0, 0.4);
+    border: var(--border-highlight);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-bottom: 20px;
+}
+
+.delusion-score-num {
+    font-family: var(--font-heading);
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+.delusion-score-num strong {
+    color: var(--coral-flame);
+    font-size: 1.4rem;
+}
+
+.delusion-verdict {
+    font-size: 0.88rem;
+    color: var(--champagne-gold);
+    margin-top: 4px;
+}
+
 /* RESPONSIVE DESIGN */
 @media (max-width: 680px) {
     .top-nav {
@@ -1597,6 +1995,10 @@ body {
     
     .input-card, .result-dashboard {
         padding: 24px 18px;
+    }
+
+    .grade-input-grid, .sleep-analytics-grid {
+        grid-template-columns: 1fr;
     }
 
     .lockin-card {
