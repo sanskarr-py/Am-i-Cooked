@@ -310,20 +310,6 @@ body {
     box-shadow: 0 4px 18px rgba(167, 139, 250, 0.35);
 }
 
-.delusion-toggle {
-    background: rgba(251, 176, 59, 0.08);
-    border-color: rgba(251, 176, 59, 0.28);
-    color: #fde047;
-}
-
-.delusion-toggle:hover {
-    background: rgba(251, 176, 59, 0.22);
-    border-color: rgba(251, 176, 59, 0.65);
-    color: #fef08a;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 18px rgba(251, 176, 59, 0.35);
-}
-
 .procrastinate-btn {
     background: rgba(225, 29, 72, 0.1);
     border-color: rgba(225, 29, 72, 0.35);
@@ -1903,70 +1889,6 @@ body {
 
 .download-card-btn:hover {
     box-shadow: 0 12px 30px rgba(56, 189, 248, 0.55);
-}
-
-/* 6. DELUSION CHECK MODAL & CHECKLIST */
-.delusion-box {
-    max-width: 520px;
-}
-
-.delusion-checklist {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    text-align: left;
-    margin: 18px 0;
-}
-
-.delusion-item {
-    background: rgba(255, 255, 255, 0.04);
-    border: var(--border-subtle);
-    border-radius: var(--radius-md);
-    padding: 12px 16px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    cursor: pointer;
-    font-size: 0.9rem;
-    color: var(--text-secondary);
-    transition: var(--transition-fast);
-}
-
-.delusion-item:hover {
-    background: rgba(255, 92, 56, 0.1);
-    border-color: rgba(255, 92, 56, 0.3);
-}
-
-.delusion-cb {
-    width: 18px;
-    height: 18px;
-    accent-color: var(--coral-flame);
-    cursor: pointer;
-}
-
-.delusion-score-display {
-    background: rgba(0, 0, 0, 0.4);
-    border: var(--border-highlight);
-    border-radius: var(--radius-md);
-    padding: 14px;
-    margin-bottom: 20px;
-}
-
-.delusion-score-num {
-    font-family: var(--font-heading);
-    font-size: 1.1rem;
-    color: #fff;
-}
-
-.delusion-score-num strong {
-    color: var(--coral-flame);
-    font-size: 1.4rem;
-}
-
-.delusion-verdict {
-    font-size: 0.88rem;
-    color: var(--champagne-gold);
-    margin-top: 4px;
 }
 
 /* RESPONSIVE DESIGN */

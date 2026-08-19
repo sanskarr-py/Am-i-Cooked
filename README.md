@@ -19,7 +19,6 @@
 - 🎙️ **AI Voice Roast Engine**: Voice notes with realistic laughing acoustic synthesis and funny commentary for every score tier!
 - 📝 **Emergency Professor Excuse Generator**: 25+ non-repeating excuses with 1-click clipboard copy.
 - 📸🎨 **Downloadable Official Cooked Card PNG**: Generates a high-res shareable diagnostic report card image via HTML5 Canvas.
-- 🤡 **Academic Delusion Reality Check**: Self-assessment checklist measuring study delusions and outputting a "Delusion Index".
 - ⏱️ **25-Min "Lock-In" Pomodoro Sprint Timer**: Quick countdown widget for immediate cramming sessions.
 - 📡 **Live Submissions Ticker Feed**: Real-time community marquee with automatic user submission integration.
 - 💀 **Skeleton Favicon & Obsidian Aesthetic Theme**: Clean, responsive velvet obsidian design with glowing coral/amber fire effects.

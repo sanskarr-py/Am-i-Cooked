@@ -1417,57 +1417,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (inp) inp.addEventListener('input', calculateRequiredGrade);
     });
 
-    // E. DELUSION REALITY CHECK QUIZ
-    const delusionBtn = document.getElementById('delusion-btn');
-    const delusionModal = document.getElementById('delusion-modal');
-    const closeDelusionBtn = document.getElementById('close-delusion-btn');
-    const delusionCbs = document.querySelectorAll('.delusion-cb');
-    const delusionPctText = document.getElementById('delusion-pct');
-    const delusionVerdictText = document.getElementById('delusion-verdict');
-
-    if (delusionBtn) {
-        delusionBtn.addEventListener('click', () => {
-            playSound('modal');
-            delusionModal.classList.remove('hidden');
-        });
-    }
-
-    if (closeDelusionBtn) {
-        closeDelusionBtn.addEventListener('click', () => {
-            playSound('click');
-            delusionModal.classList.add('hidden');
-        });
-    }
-
-    if (delusionModal) {
-        delusionModal.addEventListener('click', (e) => {
-            if (e.target === delusionModal) delusionModal.classList.add('hidden');
-        });
-    }
-
-    delusionCbs.forEach(cb => {
-        cb.addEventListener('change', () => {
-            playSound('click');
-            let sum = 0;
-            delusionCbs.forEach(c => {
-                if (c.checked) sum += parseInt(c.value);
-            });
-
-            delusionPctText.textContent = `${sum}%`;
-
-            if (sum === 0) {
-                delusionVerdictText.textContent = '"Pure academic sanity. Impressive 🗿"';
-            } else if (sum <= 35) {
-                delusionVerdictText.textContent = '"Mild academic cope. Stay vigilant 👀"';
-            } else if (sum <= 65) {
-                delusionVerdictText.textContent = '"Dangerously delusional. You\'re actively lying to yourself 🤡"';
-            } else {
-                delusionVerdictText.textContent = '"WEAPONIZED DELUSION! You\'re cooked beyond human repair 💀"';
-            }
-        });
-    });
-
-    // F. DOWNLOAD OFFICIAL COOKED CARD (PNG CANVAS GENERATOR)
+    // E. DOWNLOAD OFFICIAL COOKED CARD (PNG CANVAS GENERATOR)
     const downloadCardBtn = document.getElementById('download-card-btn');
     const cardCanvas = document.getElementById('cooked-card-canvas');
 
