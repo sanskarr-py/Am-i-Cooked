@@ -1163,67 +1163,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // 15. NEW FEATURE MODULES
     // ----------------------------------------------------------------------
 
-    // A. INSTANT SUBJECT PRESETS
-    const presetData = {
-        ochem: { days: 2, syllabus: 'massive', studied: 15, basics: 'none', hours: 8 },
-        calc2: { days: 4, syllabus: 'large', studied: 30, basics: 'little', hours: 6 },
-        cs_algo: { days: 5, syllabus: 'medium', studied: 40, basics: 'little', hours: 5 },
-        physics: { days: 3, syllabus: 'large', studied: 20, basics: 'none', hours: 7 },
-        anatomy: { days: 1, syllabus: 'massive', studied: 10, basics: 'none', hours: 10 },
-        law: { days: 3, syllabus: 'massive', studied: 35, basics: 'little', hours: 9 }
-    };
-
-    const subjectChips = document.querySelectorAll('.subject-chip');
-    subjectChips.forEach(chip => {
-        chip.addEventListener('click', () => {
-            playSound('click');
-            const key = chip.dataset.subject;
-            const data = presetData[key];
-            if (!data) return;
-
-            subjectChips.forEach(c => c.classList.remove('active'));
-            chip.classList.add('active');
-
-            // Set Date
-            const targetDate = new Date();
-            targetDate.setDate(targetDate.getDate() + data.days);
-            dateInput.valueAsDate = targetDate;
-            state.examDate = targetDate;
-            state.daysLeft = data.days;
-            countdownText.textContent = `${data.days} DAY${data.days === 1 ? '' : 'S'} LEFT`;
-            countdownSub.textContent = `${data.days * 24} HOURS REMAINING`;
-
-            // Set Syllabus
-            state.syllabusSize = data.syllabus;
-            document.querySelectorAll('.syllabus-choice').forEach(sc => {
-                sc.classList.toggle('active', sc.dataset.value === data.syllabus);
-            });
-
-            // Set Study Slider
-            state.studiedPercent = data.studied;
-            studySlider.value = data.studied;
-            studyPercentText.textContent = `${data.studied}%`;
-            document.querySelectorAll('.preset-btn').forEach(pb => {
-                pb.classList.toggle('active', parseInt(pb.dataset.pct) === data.studied);
-            });
-
-            // Set Basics
-            state.basicsKnowledge = data.basics;
-            document.querySelectorAll('.basics-choice').forEach(bc => {
-                bc.classList.toggle('active', bc.dataset.value === data.basics);
-            });
-
-            // Set Hours
-            state.dailyHours = data.hours;
-            hoursSlider.value = data.hours;
-            hoursText.textContent = `${data.hours} hrs / day`;
-
-            updateLivePreview();
-            showToast(`Loaded ${chip.textContent.trim()} preset! 🎯`);
-        });
-    });
-
-    // B. PROCEDURAL PANIC ROOM FOCUS AMBIENT AUDIO (WEB AUDIO API)
+    // A. PROCEDURAL PANIC ROOM FOCUS AMBIENT AUDIO (WEB AUDIO API)
     let ambientAudioCtx = null;
     let currentAmbientNode = null;
     let ambientSoundType = null;

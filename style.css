@@ -256,6 +256,32 @@ body {
     transform: translateY(-2px);
 }
 
+.ambient-toggle {
+    background: rgba(167, 139, 250, 0.1);
+    border-color: rgba(167, 139, 250, 0.3);
+    color: #c4b5fd;
+}
+
+.ambient-toggle:hover {
+    background: rgba(167, 139, 250, 0.22);
+    border-color: rgba(167, 139, 250, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(167, 139, 250, 0.3);
+}
+
+.delusion-toggle {
+    background: rgba(251, 176, 59, 0.1);
+    border-color: rgba(251, 176, 59, 0.3);
+    color: #fde047;
+}
+
+.delusion-toggle:hover {
+    background: rgba(251, 176, 59, 0.22);
+    border-color: rgba(251, 176, 59, 0.6);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(251, 176, 59, 0.3);
+}
+
 .procrastinate-btn {
     background: rgba(225, 29, 72, 0.1);
     border-color: rgba(225, 29, 72, 0.3);
@@ -1581,86 +1607,8 @@ body {
 }
 
 /* ==========================================================================
-   NEW FEATURES: PRESETS, FOCUS AUDIO, CRAM/SLEEP, GRADE SAVER, DELUSION
+   NEW FEATURES: FOCUS AUDIO, CRAM/SLEEP, GRADE SAVER, DELUSION
    ========================================================================== */
-
-/* 1. INSTANT SUBJECT PRESETS TOOLBAR */
-.preset-subject-card {
-    background: rgba(18, 16, 26, 0.85);
-    border: var(--border-highlight);
-    border-radius: var(--radius-xl);
-    padding: 20px 24px;
-    margin-bottom: 20px;
-    backdrop-filter: blur(16px);
-    transition: var(--transition-smooth);
-}
-
-.preset-subject-card:hover {
-    border-color: rgba(255, 92, 56, 0.4);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-.preset-subject-header {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    margin-bottom: 14px;
-}
-
-.preset-subject-icon {
-    font-size: 1.6rem;
-    background: rgba(251, 176, 59, 0.15);
-    border: 1px solid rgba(251, 176, 59, 0.3);
-    padding: 6px 10px;
-    border-radius: var(--radius-md);
-}
-
-.preset-subject-title {
-    font-family: var(--font-heading);
-    font-size: 1rem;
-    font-weight: 800;
-    color: #fff;
-    letter-spacing: 0.5px;
-    display: block;
-}
-
-.preset-subject-sub {
-    font-size: 0.8rem;
-    color: var(--text-muted);
-}
-
-.preset-chip-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.subject-chip {
-    background: rgba(255, 255, 255, 0.04);
-    border: var(--border-subtle);
-    color: var(--text-secondary);
-    font-family: var(--font-body);
-    font-size: 0.85rem;
-    font-weight: 600;
-    padding: 8px 14px;
-    border-radius: var(--radius-full);
-    cursor: pointer;
-    transition: var(--transition-fast);
-}
-
-.subject-chip:hover {
-    background: rgba(255, 92, 56, 0.15);
-    border-color: var(--coral-flame);
-    color: #fff;
-    transform: translateY(-2px);
-}
-
-.subject-chip.active {
-    background: linear-gradient(135deg, rgba(255, 92, 56, 0.35), rgba(255, 51, 102, 0.35));
-    border-color: var(--coral-flame);
-    color: #fff;
-    box-shadow: 0 4px 14px rgba(255, 92, 56, 0.3);
-}
 
 /* 2. PANIC ROOM FOCUS AUDIO WIDGET */
 .ambient-sound-card {

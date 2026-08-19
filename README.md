@@ -10,7 +10,6 @@
 
 ## ⚡ Features
 
-- 🎯 **Instant Course Presets**: Quick-load diagnostic parameters for nightmare classes (Organic Chem, Calculus II, Data Structures, Physics II, Anatomy, Law School).
 - 📅 **Exam Date & Live Countdown Tracker**: Real-time remaining hours and emergency panic window warnings.
 - 📚 **Syllabus & Basics Weighting**: Custom-tuned algorithms calculating workload density against panic thresholds.
 - 🎚️ **Live Heat Sliders & Presets**: Dynamic score preview badge that updates as you adjust your study progress.
