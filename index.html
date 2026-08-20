@@ -40,20 +40,50 @@
                 <span class="brand-name">Am I Cooked?</span>
             </a>
 
+            <!-- Live Status Pill in Navbar -->
+            <div class="nav-live-pill" id="nav-live-pill" title="Live calculated status based on your inputs">
+                <span class="live-pulse-dot"></span>
+                <span class="live-pill-label">LIVE STATUS:</span>
+                <span class="live-pill-score" id="nav-live-score">WARM 45%</span>
+            </div>
+
             <div class="nav-right">
+                <!-- Ambient Focus Audio Button -->
+                <button type="button" class="nav-btn-focus" id="ambient-audio-btn" title="Toggle Panic Room Focus Ambient Audio">
+                    <span id="ambient-audio-icon">🎧</span>
+                    <span class="btn-text" id="ambient-audio-text">Focus Audio</span>
+                </button>
+
                 <button type="button" class="nav-link" id="how-it-works-btn">How it works</button>
+                <button type="button" class="nav-link" id="tools-modal-btn">Survival Toolkit</button>
                 <button type="button" class="nav-link" id="about-btn">About</button>
+                
                 <button type="button" class="nav-btn-procrastinate" id="procrastinate-trigger-btn" title="Don't click this if you should be studying">
                     <span>💀</span>
                     <span class="btn-text">I'm Procrastinating</span>
                 </button>
+
                 <button type="button" class="nav-cta-btn" id="nav-cta-btn">Check My Status</button>
-                <button type="button" class="sound-toggle-btn" id="sound-toggle" aria-label="Toggle Sound Effects" title="Toggle audio cues">
+                
+                <button type="button" class="sound-toggle-btn" id="sound-toggle" aria-label="Toggle Sound Effects" title="Toggle audio cues & voice notes">
                     <span class="sound-icon" id="sound-icon-display">🔊</span>
                 </button>
             </div>
         </nav>
     </header>
+
+    <!-- POLISHED LIVE ROAST FEED TICKER -->
+    <div class="ticker-wrapper" aria-label="Community roast live ticker">
+        <div class="ticker-prefix">
+            <span class="ticker-dot"></span>
+            <span class="ticker-label">COMMUNITY ROAST FEED</span>
+        </div>
+        <div class="ticker-viewport">
+            <div class="ticker-track" id="live-ticker-track">
+                <!-- Injected via JavaScript for seamless loop & dynamic updates -->
+            </div>
+        </div>
+    </div>
 
     <!-- Main Content Container -->
     <main class="app-container" id="main-content">
@@ -97,8 +127,38 @@
                     </div>
                     <div class="stat-divider"></div>
                     <div class="stat-item">
+                        <span class="stat-number">AI Voice</span>
+                        <span class="stat-label">Audio Roasts</span>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
                         <span class="stat-number">Instant</span>
                         <span class="stat-label">Survival Plan</span>
+                    </div>
+                </div>
+
+                <!-- Quick Survival Suite Grid on Hero -->
+                <div class="hero-tools-preview">
+                    <div class="preview-card" id="open-cram-card">
+                        <div class="preview-icon">😴⚡</div>
+                        <div class="preview-info">
+                            <h4>All-Nighter Simulator</h4>
+                            <p>Cram vs Sleep retention penalty</p>
+                        </div>
+                    </div>
+                    <div class="preview-card" id="open-gradesaver-card">
+                        <div class="preview-icon">📊🎯</div>
+                        <div class="preview-info">
+                            <h4>Grade Saver Calc</h4>
+                            <p>Find minimum passing score</p>
+                        </div>
+                    </div>
+                    <div class="preview-card" id="open-excuse-card">
+                        <div class="preview-icon">📝🎲</div>
+                        <div class="preview-info">
+                            <h4>Professor Excuses</h4>
+                            <p>Emergency 1-click generators</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -372,7 +432,7 @@
                 
                 <!-- Main Result Hero Card -->
                 <div class="result-hero-card" id="result-hero-card">
-                    <div class="result-eyebrow">YOUR RESULT</div>
+                    <div class="result-eyebrow">DIAGNOSTIC REPORT FINALIZED</div>
 
                     <!-- Animated Circular Cooked Meter -->
                     <div class="circular-meter-wrapper">
@@ -413,6 +473,29 @@
                             "You've entered dangerous territory."
                         </p>
                     </div>
+
+                    <!-- AI VOICE ROAST ENGINE CARD -->
+                    <div class="voice-roast-card" id="voice-roast-card">
+                        <div class="voice-header-row">
+                            <div class="voice-title-wrap">
+                                <span class="voice-badge-icon">🎙️</span>
+                                <span class="voice-badge-title">AI VOICE ROAST:</span>
+                                <div class="soundwave-bar-container" id="soundwave-anim" aria-hidden="true">
+                                    <span class="sw-bar b1"></span>
+                                    <span class="sw-bar b2"></span>
+                                    <span class="sw-bar b3"></span>
+                                    <span class="sw-bar b4"></span>
+                                    <span class="sw-bar b5"></span>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-voice-replay" id="replay-voice-btn" title="Replay voice note commentary">
+                                <span>🔁</span>
+                                <span>Replay Voice</span>
+                            </button>
+                        </div>
+                        <p class="voice-transcript-text" id="voice-transcript-text">"Analyzing your academic fate..."</p>
+                    </div>
+
                 </div>
 
                 <!-- Statistics Grid (Breakdown) -->
@@ -435,6 +518,21 @@
                     <div class="stat-card">
                         <div class="stat-card-val" id="stat-basics-val">SOMEWHAT</div>
                         <div class="stat-card-label">BASICS</div>
+                    </div>
+                </div>
+
+                <!-- 25-MIN LOCK-IN SPRINT TIMER WIDGET -->
+                <div class="lockin-sprint-card">
+                    <div class="lockin-left-info">
+                        <span class="lockin-icon">⏱️</span>
+                        <div>
+                            <h4 class="lockin-heading">READY TO LOCK IN RIGHT NOW?</h4>
+                            <p class="lockin-desc">Start a focused 25-minute Pomodoro sprint</p>
+                        </div>
+                    </div>
+                    <div class="lockin-right-controls">
+                        <span class="timer-digits-text" id="timer-digits-display">25:00</span>
+                        <button type="button" class="btn-timer-toggle" id="timer-toggle-btn">START SPRINT 🚀</button>
                     </div>
                 </div>
 
@@ -540,12 +638,17 @@
                 <!-- Share & Actions Section -->
                 <div class="share-card">
                     <h3 class="share-title">Think your friends are more cooked?</h3>
-                    <p class="share-subtitle">Compare your survival odds or send this as a wake-up call to your study group.</p>
+                    <p class="share-subtitle">Compare your survival odds or download your official diagnosis report card.</p>
 
                     <div class="share-button-row">
                         <button type="button" class="btn-share-action btn-copy-result" id="copy-result-btn">
                             <span class="share-btn-icon" id="copy-btn-icon">📋</span>
                             <span id="copy-btn-text">Copy Result</span>
+                        </button>
+
+                        <button type="button" class="btn-share-action btn-download-png" id="download-card-btn">
+                            <span class="share-btn-icon">📸</span>
+                            <span>Download PNG Card</span>
                         </button>
 
                         <button type="button" class="btn-share-action btn-native-share" id="native-share-btn">
@@ -560,6 +663,87 @@
                     </div>
                 </div>
 
+                <!-- EXTRA SURVIVAL SUITE (Accordion / Cards) -->
+                <div class="extra-suite-card">
+                    <div class="suite-header">
+                        <h3 class="section-card-title">⚡ Academic Emergency Toolkit</h3>
+                        <p class="section-card-desc">Calculators, simulators, and emergency excuses.</p>
+                    </div>
+
+                    <div class="suite-tabs-nav">
+                        <button type="button" class="suite-tab-btn active" data-tab="cram-tab">😴 All-Nighter Simulator</button>
+                        <button type="button" class="suite-tab-btn" data-tab="grade-tab">🎯 Grade Saver</button>
+                        <button type="button" class="suite-tab-btn" data-tab="excuse-tab">📝 Professor Excuses</button>
+                    </div>
+
+                    <!-- TAB 1: ALL-NIGHTER SIMULATOR -->
+                    <div class="suite-tab-panel active" id="cram-tab">
+                        <p class="tab-explainer">Simulate cognitive alertness vs retention penalty when pulling an all-nighter.</p>
+                        <div class="cram-controls">
+                            <div class="cram-slider-row">
+                                <label for="cram-sleep-slider">Planned Sleep Tonight: <strong id="cram-hours-display">4 hours</strong></label>
+                                <input type="range" min="0" max="8" value="4" step="0.5" id="cram-sleep-slider" class="premium-slider">
+                            </div>
+                            <div class="cram-matrix-grid">
+                                <div class="cram-stat-box">
+                                    <span class="cram-stat-title">Brain Alertness</span>
+                                    <span class="cram-stat-val" id="cram-alertness-val">68%</span>
+                                    <div class="cram-mini-bar"><div class="mini-fill" id="cram-alertness-fill" style="width: 68%;"></div></div>
+                                </div>
+                                <div class="cram-stat-box">
+                                    <span class="cram-stat-title">Memory Retention</span>
+                                    <span class="cram-stat-val" id="cram-retention-val">52%</span>
+                                    <div class="cram-mini-bar"><div class="mini-fill" id="cram-retention-fill" style="width: 52%;"></div></div>
+                                </div>
+                                <div class="cram-stat-box">
+                                    <span class="cram-stat-title">Crash Risk</span>
+                                    <span class="cram-stat-val" id="cram-crash-val">HIGH 🔥</span>
+                                </div>
+                            </div>
+                            <div class="cram-advice-box" id="cram-advice-text">
+                                "4 hours gets you in the door, but take 90-minute sleep cycles to avoid heavy brain fog."
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TAB 2: GRADE SAVER -->
+                    <div class="suite-tab-panel" id="grade-tab">
+                        <p class="tab-explainer">Calculate the exact minimum score % needed on your final exam to pass or hit your target.</p>
+                        <div class="gradesaver-grid">
+                            <div class="input-field-group">
+                                <label for="gs-current-grade">Current Grade (%)</label>
+                                <input type="number" id="gs-current-grade" min="0" max="100" value="65" class="tool-input">
+                            </div>
+                            <div class="input-field-group">
+                                <label for="gs-target-grade">Target Desired Grade (%)</label>
+                                <input type="number" id="gs-target-grade" min="0" max="100" value="70" class="tool-input">
+                            </div>
+                            <div class="input-field-group">
+                                <label for="gs-final-weight">Final Exam Weight (%)</label>
+                                <input type="number" id="gs-final-weight" min="1" max="100" value="40" class="tool-input">
+                            </div>
+                        </div>
+                        <div class="gs-result-card" id="gs-result-card">
+                            <span class="gs-result-label">MINIMUM SCORE NEEDED ON FINAL:</span>
+                            <span class="gs-result-score" id="gs-needed-score">77.5%</span>
+                            <span class="gs-verdict-tag" id="gs-verdict-tag">DOABLE WITH SOLID REVISION ⚡</span>
+                        </div>
+                    </div>
+
+                    <!-- TAB 3: PROFESSOR EXCUSES -->
+                    <div class="suite-tab-panel" id="excuse-tab">
+                        <p class="tab-explainer">Generate instant, witty, non-repeating emergency excuses for your professor.</p>
+                        <div class="excuse-bubble" id="excuse-bubble">
+                            <p class="excuse-text" id="excuse-text-display">"My laptop decided that 2 AM before the exam was the optimal moment to initiate a 4-hour critical OS firmware update."</p>
+                        </div>
+                        <div class="excuse-actions-row">
+                            <button type="button" class="btn-excuse-action" id="gen-excuse-btn">🎲 Generate Excuse</button>
+                            <button type="button" class="btn-excuse-action btn-copy-excuse" id="copy-excuse-btn">📋 Copy Excuse</button>
+                        </div>
+                    </div>
+
+                </div>
+
             </div>
         </section>
 
@@ -568,6 +752,48 @@
     <!-- ========================================== -->
     <!-- MODALS & OVERLAYS                          -->
     <!-- ========================================== -->
+
+    <!-- Focus Audio Modal / Player Drawer -->
+    <div class="modal-backdrop" id="ambient-modal" aria-hidden="true" role="dialog" aria-labelledby="ambient-modal-title" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title" id="ambient-modal-title">🎧 Panic Room Focus Audio</h3>
+                <button type="button" class="modal-close-btn" data-close-modal aria-label="Close modal">✕</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-para">Procedurally synthesized ambient soundscapes generated live using Web Audio API to lock you into deep focus.</p>
+                <div class="sound-presets-grid">
+                    <button type="button" class="sound-preset-card active" data-soundscape="rain">
+                        <span class="preset-icon">🌧️</span>
+                        <span class="preset-title">Heavy Rain</span>
+                        <span class="preset-desc">Calming rainfall & drizzle</span>
+                    </button>
+                    <button type="button" class="sound-preset-card" data-soundscape="binaural">
+                        <span class="preset-icon">🪐</span>
+                        <span class="preset-title">Alpha Waves</span>
+                        <span class="preset-desc">Binaural study frequencies</span>
+                    </button>
+                    <button type="button" class="sound-preset-card" data-soundscape="cafe">
+                        <span class="preset-icon">☕</span>
+                        <span class="preset-title">Coffee Shop</span>
+                        <span class="preset-desc">Muffled ambient warmth</span>
+                    </button>
+                    <button type="button" class="sound-preset-card" data-soundscape="lofi">
+                        <span class="preset-icon">⚡</span>
+                        <span class="preset-title">Synth Drone</span>
+                        <span class="preset-desc">Deep cyber focus hum</span>
+                    </button>
+                </div>
+                <div class="audio-controls-row">
+                    <label for="ambient-vol-slider" class="vol-label">Volume:</label>
+                    <input type="range" min="0" max="1" step="0.05" value="0.5" id="ambient-vol-slider" class="premium-slider">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-action" id="toggle-ambient-play-btn">Play Soundscape ▶</button>
+            </div>
+        </div>
+    </div>
 
     <!-- How It Works Modal -->
     <div class="modal-backdrop" id="how-modal" aria-hidden="true" role="dialog" aria-labelledby="how-modal-title" style="display: none;">
@@ -622,6 +848,9 @@
             <div class="toast-message" id="toast-msg">Bro... you're literally using an exam calculator instead of studying. 💀</div>
         </div>
     </div>
+
+    <!-- Hidden Canvas for PNG Card Generation -->
+    <canvas id="cooked-card-canvas" width="800" height="600" style="display: none;"></canvas>
 
     <!-- JavaScript Application Logic -->
     <script src="script.js"></script>

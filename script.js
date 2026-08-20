@@ -1,5 +1,5 @@
 /* ==========================================================================
-   AM I COOKED? 🔥 — APPLICATION CONTROLLER
+   AM I COOKED? 🔥 — APPLICATION CONTROLLER & EXPANDED FEATURE ENGINE
    Clean, modular, deterministic frontend engine with zero external dependencies
    ========================================================================== */
 
@@ -18,7 +18,14 @@ document.addEventListener('DOMContentLoaded', () => {
         basicsKnowledge: 'some', // 'none' | 'some' | 'yes'
         dailyHours: 4,
         cookedScore: 0,
-        soundEnabled: true
+        soundEnabled: true,
+        ambientPlaying: false,
+        activeSoundscape: 'rain',
+        ambientVolume: 0.5,
+        timerRunning: false,
+        timerSeconds: 25 * 60,
+        timerInterval: null,
+        excuseIndex: 0
     };
 
     // ----------------------------------------------------------------------
@@ -31,8 +38,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const heroStartBtn = document.getElementById('hero-start-btn');
     const navCtaBtn = document.getElementById('nav-cta-btn');
     const navBrandBtn = document.getElementById('nav-brand-btn');
+    const navLiveScore = document.getElementById('nav-live-score');
     const soundToggle = document.getElementById('sound-toggle');
     const soundIconDisplay = document.getElementById('sound-icon-display');
+    const ambientAudioBtn = document.getElementById('ambient-audio-btn');
+    const liveTickerTrack = document.getElementById('live-ticker-track');
 
     // Calculator Controls
     const calcBackBtn = document.getElementById('calc-back-btn');
@@ -79,6 +89,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const verdictTierText = document.getElementById('verdict-tier-text');
     const verdictQuoteText = document.getElementById('verdict-quote-text');
 
+    // AI Voice Roast Elements
+    const voiceRoastCard = document.getElementById('voice-roast-card');
+    const voiceTranscriptText = document.getElementById('voice-transcript-text');
+    const replayVoiceBtn = document.getElementById('replay-voice-btn');
+
     // Result Stats Breakdown
     const statDaysVal = document.getElementById('stat-days-val');
     const statSyllabusVal = document.getElementById('stat-syllabus-val');
@@ -109,16 +124,57 @@ document.addEventListener('DOMContentLoaded', () => {
     const copyResultBtn = document.getElementById('copy-result-btn');
     const copyBtnIcon = document.getElementById('copy-btn-icon');
     const copyBtnText = document.getElementById('copy-btn-text');
+    const downloadCardBtn = document.getElementById('download-card-btn');
     const nativeShareBtn = document.getElementById('native-share-btn');
     const retakeCalcBtn = document.getElementById('retake-calc-btn');
 
-    // Micro-interactions & Modals
-    const procrastinateTriggerBtn = document.getElementById('procrastinate-trigger-btn');
-    const howItWorksBtn = document.getElementById('how-it-works-btn');
-    const aboutBtn = document.getElementById('about-btn');
+    // 25-Min Lock-In Timer
+    const timerDigitsDisplay = document.getElementById('timer-digits-display');
+    const timerToggleBtn = document.getElementById('timer-toggle-btn');
+
+    // Toolkit Tabs & Tools
+    const suiteTabBtns = document.querySelectorAll('.suite-tab-btn');
+    const suiteTabPanels = document.querySelectorAll('.suite-tab-panel');
+    const cramSleepSlider = document.getElementById('cram-sleep-slider');
+    const cramHoursDisplay = document.getElementById('cram-hours-display');
+    const cramAlertnessVal = document.getElementById('cram-alertness-val');
+    const cramAlertnessFill = document.getElementById('cram-alertness-fill');
+    const cramRetentionVal = document.getElementById('cram-retention-val');
+    const cramRetentionFill = document.getElementById('cram-retention-fill');
+    const cramCrashVal = document.getElementById('cram-crash-val');
+    const cramAdviceText = document.getElementById('cram-advice-text');
+
+    // Grade Saver
+    const gsCurrentGrade = document.getElementById('gs-current-grade');
+    const gsTargetGrade = document.getElementById('gs-target-grade');
+    const gsFinalWeight = document.getElementById('gs-final-weight');
+    const gsNeededScore = document.getElementById('gs-needed-score');
+    const gsVerdictTag = document.getElementById('gs-verdict-tag');
+
+    // Excuses
+    const excuseTextDisplay = document.getElementById('excuse-text-display');
+    const genExcuseBtn = document.getElementById('gen-excuse-btn');
+    const copyExcuseBtn = document.getElementById('copy-excuse-btn');
+
+    // Modals
+    const ambientModal = document.getElementById('ambient-modal');
     const howModal = document.getElementById('how-modal');
     const aboutModal = document.getElementById('about-modal');
+    const howItWorksBtn = document.getElementById('how-it-works-btn');
+    const toolsModalBtn = document.getElementById('tools-modal-btn');
+    const aboutBtn = document.getElementById('about-btn');
     const modalCloseButtons = document.querySelectorAll('[data-close-modal]');
+    const procrastinateTriggerBtn = document.getElementById('procrastinate-trigger-btn');
+    const soundPresetCards = document.querySelectorAll('.sound-preset-card');
+    const ambientVolSlider = document.getElementById('ambient-vol-slider');
+    const toggleAmbientPlayBtn = document.getElementById('toggle-ambient-play-btn');
+
+    // Hero Preview Cards
+    const openCramCard = document.getElementById('open-cram-card');
+    const openGradesaverCard = document.getElementById('open-gradesaver-card');
+    const openExcuseCard = document.getElementById('open-excuse-card');
+
+    // Toast
     const appToast = document.getElementById('app-toast');
     const toastIcon = document.getElementById('toast-icon');
     const toastMsg = document.getElementById('toast-msg');
@@ -127,6 +183,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // 3. SYNTHETIC AUDIO ENGINE (Web Audio API)
     // ----------------------------------------------------------------------
     let audioCtx = null;
+    let ambientNodes = [];
+    let ambientGainNode = null;
 
     function initAudioContext() {
         if (!audioCtx && (window.AudioContext || window.webkitAudioContext)) {
@@ -147,7 +205,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const now = audioCtx.currentTime;
 
             if (type === 'click') {
-                // Subtle tactile click
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'sine';
@@ -160,7 +217,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 osc.start(now);
                 osc.stop(now + 0.04);
             } else if (type === 'step') {
-                // Pleasant step transition tone
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'sine';
@@ -173,7 +229,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 osc.start(now);
                 osc.stop(now + 0.09);
             } else if (type === 'suspense') {
-                // Low tension drone
                 const osc = audioCtx.createOscillator();
                 const gain = audioCtx.createGain();
                 osc.type = 'triangle';
@@ -187,7 +242,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 osc.start(now);
                 osc.stop(now + 1.4);
             } else if (type === 'reveal') {
-                // Harmonic chord for result reveal
                 const freqs = [330, 440, 554, 660];
                 freqs.forEach((f, idx) => {
                     const osc = audioCtx.createOscillator();
@@ -213,13 +267,196 @@ document.addEventListener('DOMContentLoaded', () => {
                 gain.connect(audioCtx.destination);
                 osc.start(now);
                 osc.stop(now + 0.08);
+            } else if (type === 'bell') {
+                const freqs = [587.33, 880, 1174.66];
+                freqs.forEach(f => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(f, now);
+                    gain.gain.setValueAtTime(0.12, now);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, now + 1.8);
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.start(now);
+                    osc.stop(now + 1.8);
+                });
             }
-        } catch (e) {
-            // Audio context failed or blocked by policy
+        } catch (e) {}
+    }
+
+    // ----------------------------------------------------------------------
+    // 4. PANIC ROOM FOCUS AMBIENT SOUNDSCAPE SYNTHESIS
+    // ----------------------------------------------------------------------
+    function stopAmbientSound() {
+        ambientNodes.forEach(node => {
+            try {
+                if (node.stop) node.stop();
+                if (node.disconnect) node.disconnect();
+            } catch (e) {}
+        });
+        ambientNodes = [];
+        state.ambientPlaying = false;
+        ambientAudioBtn.classList.remove('playing');
+        toggleAmbientPlayBtn.textContent = 'Play Soundscape ▶';
+    }
+
+    function startAmbientSound(soundscape = state.activeSoundscape) {
+        initAudioContext();
+        if (!audioCtx) return;
+        stopAmbientSound();
+
+        state.activeSoundscape = soundscape;
+        state.ambientPlaying = true;
+        ambientAudioBtn.classList.add('playing');
+        toggleAmbientPlayBtn.textContent = 'Pause Soundscape ⏸';
+
+        ambientGainNode = audioCtx.createGain();
+        ambientGainNode.gain.setValueAtTime(state.ambientVolume, audioCtx.currentTime);
+        ambientGainNode.connect(audioCtx.destination);
+        ambientNodes.push(ambientGainNode);
+
+        if (soundscape === 'rain') {
+            // Synthesize Heavy Rain via Buffer Pink Noise
+            const bufferSize = 2 * audioCtx.sampleRate;
+            const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+            const output = noiseBuffer.getChannelData(0);
+            let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+            for (let i = 0; i < bufferSize; i++) {
+                const white = Math.random() * 2 - 1;
+                b0 = 0.99886 * b0 + white * 0.0555179;
+                b1 = 0.99332 * b1 + white * 0.0750759;
+                b2 = 0.96900 * b2 + white * 0.1538520;
+                b3 = 0.86650 * b3 + white * 0.3104856;
+                b4 = 0.55000 * b4 + white * 0.5329522;
+                b5 = -0.7616 * b5 - white * 0.0168980;
+                output[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.08;
+                b6 = white * 0.115926;
+            }
+
+            const whiteNoise = audioCtx.createBufferSource();
+            whiteNoise.buffer = noiseBuffer;
+            whiteNoise.loop = true;
+
+            const filter = audioCtx.createBiquadFilter();
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(1000, audioCtx.currentTime);
+
+            whiteNoise.connect(filter);
+            filter.connect(ambientGainNode);
+            whiteNoise.start();
+            ambientNodes.push(whiteNoise);
+        } else if (soundscape === 'binaural') {
+            // 200Hz + 210Hz Alpha Waves
+            const oscL = audioCtx.createOscillator();
+            const oscR = audioCtx.createOscillator();
+            oscL.type = 'sine';
+            oscR.type = 'sine';
+            oscL.frequency.setValueAtTime(200, audioCtx.currentTime);
+            oscR.frequency.setValueAtTime(210, audioCtx.currentTime);
+
+            const merger = audioCtx.createChannelMerger(2);
+            oscL.connect(merger, 0, 0);
+            oscR.connect(merger, 0, 1);
+            merger.connect(ambientGainNode);
+
+            oscL.start();
+            oscR.start();
+            ambientNodes.push(oscL, oscR);
+        } else if (soundscape === 'cafe') {
+            // Muffled Coffee Shop Rumble
+            const osc = audioCtx.createOscillator();
+            const filter = audioCtx.createBiquadFilter();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(80, audioCtx.currentTime);
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(250, audioCtx.currentTime);
+
+            osc.connect(filter);
+            filter.connect(ambientGainNode);
+            osc.start();
+            ambientNodes.push(osc);
+        } else if (soundscape === 'lofi') {
+            // Deep Cyber Synthwave Drone
+            const osc1 = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
+            const filter = audioCtx.createBiquadFilter();
+            osc1.type = 'sawtooth';
+            osc2.type = 'sawtooth';
+            osc1.frequency.setValueAtTime(110, audioCtx.currentTime);
+            osc2.frequency.setValueAtTime(110.5, audioCtx.currentTime);
+            filter.type = 'lowpass';
+            filter.frequency.setValueAtTime(400, audioCtx.currentTime);
+
+            osc1.connect(filter);
+            osc2.connect(filter);
+            filter.connect(ambientGainNode);
+            osc1.start();
+            osc2.start();
+            ambientNodes.push(osc1, osc2);
         }
     }
 
-    // Toggle sound
+    ambientAudioBtn.addEventListener('click', () => {
+        openModal(ambientModal);
+    });
+
+    toggleAmbientPlayBtn.addEventListener('click', () => {
+        if (state.ambientPlaying) {
+            stopAmbientSound();
+        } else {
+            startAmbientSound(state.activeSoundscape);
+        }
+    });
+
+    soundPresetCards.forEach(card => {
+        card.addEventListener('click', () => {
+            playSound('click');
+            soundPresetCards.forEach(c => c.classList.remove('active'));
+            card.classList.add('active');
+            const soundscape = card.getAttribute('data-soundscape');
+            startAmbientSound(soundscape);
+        });
+    });
+
+    ambientVolSlider.addEventListener('input', (e) => {
+        state.ambientVolume = parseFloat(e.target.value);
+        if (ambientGainNode) {
+            ambientGainNode.gain.setValueAtTime(state.ambientVolume, audioCtx.currentTime);
+        }
+    });
+
+    // ----------------------------------------------------------------------
+    // 5. LIVE TICKER FEED POPULATION
+    // ----------------------------------------------------------------------
+    const initialTickerData = [
+        { avatar: "💀", major: "CS Major @ MIT", score: "98% DEEP FRIED", tag: "tag-deepfried", time: "1m ago" },
+        { avatar: "🍞", major: "Biology @ UCLA", score: "38% TOASTED", tag: "tag-toasted", time: "2m ago" },
+        { avatar: "🔥", major: "Calculus III @ NYU", score: "84% COOKED", tag: "tag-cooked", time: "3m ago" },
+        { avatar: "😎", major: "Economics @ Oxford", score: "14% SAFE", tag: "tag-fine", time: "4m ago" },
+        { avatar: "☠️", major: "Organic Chem @ Harvard", score: "100% GONE", tag: "tag-deepfried", time: "5m ago" },
+        { avatar: "☕", major: "Physics II @ Stanford", score: "62% WARM", tag: "tag-warm", time: "7m ago" },
+        { avatar: "🚨", major: "Neuroscience @ Johns Hopkins", score: "94% EMERGENCY", tag: "tag-deepfried", time: "8m ago" },
+        { avatar: "🥪", major: "Psychology @ Berkeley", score: "28% CRISPY", tag: "tag-toasted", time: "10m ago" }
+    ];
+
+    function populateLiveTicker() {
+        if (!liveTickerTrack) return;
+        const doubled = [...initialTickerData, ...initialTickerData]; // Seamless loop
+        liveTickerTrack.innerHTML = doubled.map(item => `
+            <div class="ticker-item">
+                <span>${item.avatar}</span>
+                <span><strong>${item.major}</strong></span>
+                <span class="ticker-tag ${item.tag}">${item.score}</span>
+                <span style="color:var(--text-dim);font-size:0.7rem;">(${item.time})</span>
+            </div>
+        `).join('');
+    }
+    populateLiveTicker();
+
+    // ----------------------------------------------------------------------
+    // 6. TOGGLE SOUND
+    // ----------------------------------------------------------------------
     soundToggle.addEventListener('click', () => {
         state.soundEnabled = !state.soundEnabled;
         soundIconDisplay.textContent = state.soundEnabled ? '🔊' : '🔇';
@@ -229,7 +466,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ----------------------------------------------------------------------
-    // 4. VIEW NAVIGATION & TRANSITIONS
+    // 7. VIEW NAVIGATION & TRANSITIONS
     // ----------------------------------------------------------------------
     function switchView(viewName) {
         state.currentView = viewName;
@@ -264,8 +501,25 @@ document.addEventListener('DOMContentLoaded', () => {
         switchView('hero');
     });
 
+    // Hero tool preview cards
+    if (openCramCard) {
+        openCramCard.addEventListener('click', () => {
+            switchView('calculator');
+        });
+    }
+    if (openGradesaverCard) {
+        openGradesaverCard.addEventListener('click', () => {
+            switchView('calculator');
+        });
+    }
+    if (openExcuseCard) {
+        openExcuseCard.addEventListener('click', () => {
+            switchView('calculator');
+        });
+    }
+
     // ----------------------------------------------------------------------
-    // 5. MULTI-STEP LOGIC & VALIDATION
+    // 8. MULTI-STEP LOGIC & VALIDATION
     // ----------------------------------------------------------------------
     function setStep(newStep) {
         if (newStep < 1 || newStep > state.totalSteps) return;
@@ -296,6 +550,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 panel.classList.remove('active');
             }
         });
+
+        updateLiveScorePreview();
     }
 
     calcBackBtn.addEventListener('click', () => {
@@ -341,7 +597,6 @@ document.addEventListener('DOMContentLoaded', () => {
         state.daysLeft = diffDays;
         state.examDate = examDateInput.value;
 
-        // Clear active pill state
         datePills.forEach(p => p.classList.remove('active'));
 
         if (diffDays < 0) {
@@ -373,6 +628,8 @@ document.addEventListener('DOMContentLoaded', () => {
             dateSubText.textContent = "Plenty of runway. Don't let procrastination steal your head start.";
             dateFeedbackIcon.textContent = "😎";
         }
+
+        updateLiveScorePreview();
     }
 
     examDateInput.addEventListener('change', () => {
@@ -421,6 +678,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.classList.add('selected');
             card.setAttribute('aria-checked', 'true');
             state.syllabusSize = card.getAttribute('data-syllabus');
+            updateLiveScorePreview();
         });
     });
 
@@ -442,13 +700,13 @@ document.addEventListener('DOMContentLoaded', () => {
         state.studiedPercent = parseInt(val, 10);
         studyValDisplay.textContent = state.studiedPercent;
 
-        // Find caption
         for (let cap of studyCaptions) {
             if (state.studiedPercent <= cap.max) {
                 studyCaptionDisplay.textContent = cap.text;
                 break;
             }
         }
+        updateLiveScorePreview();
     }
 
     studySlider.addEventListener('input', (e) => {
@@ -479,6 +737,7 @@ document.addEventListener('DOMContentLoaded', () => {
             card.classList.add('selected');
             card.setAttribute('aria-checked', 'true');
             state.basicsKnowledge = card.getAttribute('data-basics');
+            updateLiveScorePreview();
         });
     });
 
@@ -490,94 +749,140 @@ document.addEventListener('DOMContentLoaded', () => {
     hoursSlider.addEventListener('input', (e) => {
         state.dailyHours = parseFloat(e.target.value);
         hoursValDisplay.textContent = state.dailyHours;
+        updateLiveScorePreview();
     });
 
     // ----------------------------------------------------------------------
-    // 6. COOKED SCORE ALGORITHM & CALCULATION ENGINE
+    // 9. COOKED SCORE ALGORITHM & CALCULATION ENGINE
     // ----------------------------------------------------------------------
     function calculateCookedScore() {
         const days = Math.max(0, state.daysLeft);
         const studied = state.studiedPercent;
         const dailyHrs = state.dailyHours;
 
-        // Syllabus topic count weighting
-        const topicCounts = {
-            small: 4,
-            medium: 8,
-            large: 15,
-            massive: 24
-        };
+        const topicCounts = { small: 4, medium: 8, large: 15, massive: 24 };
         const topicCount = topicCounts[state.syllabusSize] || 8;
 
-        // Baseline hours required per topic
-        const hoursPerTopicMap = {
-            small: 4.5,
-            medium: 6.0,
-            large: 7.5,
-            massive: 9.0
-        };
+        const hoursPerTopicMap = { small: 4.5, medium: 6.0, large: 7.5, massive: 9.0 };
         const hoursPerTopic = hoursPerTopicMap[state.syllabusSize] || 6.0;
 
-        // Basics multiplier (higher if basics are missing)
-        const basicsMultiplierMap = {
-            yes: 1.0,
-            some: 1.35,
-            none: 1.8
-        };
+        const basicsMultiplierMap = { yes: 1.0, some: 1.35, none: 1.8 };
         const basicsMultiplier = basicsMultiplierMap[state.basicsKnowledge] || 1.35;
 
-        // Remaining workload
         const unstudiedRatio = (100 - studied) / 100;
         const totalHoursNeeded = topicCount * hoursPerTopic * unstudiedRatio * basicsMultiplier;
-
-        // Total available study capacity
         const totalAvailableHours = days * dailyHrs;
 
         let finalScore = 0;
 
         if (studied >= 100) {
-            // Completely studied
             finalScore = state.basicsKnowledge === 'none' ? 12 : 4;
         } else if (days === 0) {
-            // Exam is today
             finalScore = Math.max(85, 100 - Math.round(studied * 0.4));
         } else if (dailyHrs === 0) {
-            // 0 hours/day available
             finalScore = 98;
         } else {
-            // Workload ratio
             const workloadRatio = totalHoursNeeded / Math.max(totalAvailableHours, 0.5);
 
-            // Calibrated curve
             if (workloadRatio <= 0.3) {
-                // 0 - 20 range (Chilling)
                 finalScore = Math.round(workloadRatio * 60);
             } else if (workloadRatio <= 0.65) {
-                // 21 - 40 range (Lightly toasted)
                 finalScore = Math.round(20 + ((workloadRatio - 0.3) / 0.35) * 20);
             } else if (workloadRatio <= 1.0) {
-                // 41 - 60 range (Getting warm)
                 finalScore = Math.round(40 + ((workloadRatio - 0.65) / 0.35) * 20);
             } else if (workloadRatio <= 1.5) {
-                // 61 - 80 range (You're cooked)
                 finalScore = Math.round(60 + ((workloadRatio - 1.0) / 0.5) * 20);
             } else if (workloadRatio <= 2.2) {
-                // 81 - 95 range (Deep fried)
                 finalScore = Math.round(80 + ((workloadRatio - 1.5) / 0.7) * 15);
             } else {
-                // 96 - 100 range (Academic emergency)
                 finalScore = Math.min(100, Math.round(95 + (workloadRatio - 2.2) * 2.5));
             }
         }
 
-        // Clamp between 0 and 100
         finalScore = Math.max(0, Math.min(100, finalScore));
         state.cookedScore = finalScore;
         return finalScore;
     }
 
+    function updateLiveScorePreview() {
+        const score = calculateCookedScore();
+        if (navLiveScore) {
+            let label = "CHILLING";
+            if (score > 80) label = "DEEP FRIED";
+            else if (score > 60) label = "COOKED";
+            else if (score > 40) label = "WARM";
+            else if (score > 20) label = "TOASTED";
+            navLiveScore.textContent = `${label} ${score}%`;
+        }
+    }
+
     // ----------------------------------------------------------------------
-    // 7. SUSPENSE TRANSITION & RESULT RENDERING
+    // 10. AI VOICE ROAST ENGINE (Web Speech API)
+    // ----------------------------------------------------------------------
+    const voiceRoasts = {
+        tier1: [ // 0-20%
+            "Look at you, academic weapon! You're chilling while the rest of campus is having an existential breakdown. Go take a victory lap.",
+            "You are actually cruising with total safety. Go drink some water and don't get overconfident."
+        ],
+        tier2: [ // 21-40%
+            "Lightly toasted! You're feeling a gentle warmth, but nothing a few solid study sessions can't handle. Stay locked in.",
+            "You have plenty of runway. Just stop opening social media and finish those summary slides."
+        ],
+        tier3: [ // 41-60%
+            "The stove is definitely on. You're hovering in the danger zone where procrastination will turn into a full catastrophe. Lock in now!",
+            "Getting warm! You need to treat your daily study hours like an unbreakable contract."
+        ],
+        tier4: [ // 61-80%
+            "Oh bro, you are properly cooked. Medium well with crispy edges. Cancel your weekend plans and open the textbook immediately!",
+            "You're in dangerous territory. If you don't start grinding today, that final exam is going to fold you like a lawn chair."
+        ],
+        tier5: [ // 81-100%
+            "Academic emergency! You are deep fried beyond recognition. May the grade curve and caffeine gods have mercy on your GPA! 💀",
+            "This isn't even cooked anymore, this is straight carbonized charcoal. Put down the phone and start cramming right now!"
+        ]
+    };
+
+    function playVoiceRoast(score) {
+        if (!state.soundEnabled) return;
+        if (!('speechSynthesis' in window)) return;
+
+        window.speechSynthesis.cancel();
+
+        let list = voiceRoasts.tier5;
+        if (score <= 20) list = voiceRoasts.tier1;
+        else if (score <= 40) list = voiceRoasts.tier2;
+        else if (score <= 60) list = voiceRoasts.tier3;
+        else if (score <= 80) list = voiceRoasts.tier4;
+
+        const transcript = list[Math.floor(Math.random() * list.length)];
+        voiceTranscriptText.textContent = `"${transcript}"`;
+
+        const utterance = new SpeechSynthesisUtterance(transcript);
+        utterance.rate = 1.05;
+        utterance.pitch = 1.0;
+
+        utterance.onstart = () => {
+            voiceRoastCard.classList.add('speaking');
+        };
+        utterance.onend = () => {
+            voiceRoastCard.classList.remove('speaking');
+        };
+        utterance.onerror = () => {
+            voiceRoastCard.classList.remove('speaking');
+        };
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    if (replayVoiceBtn) {
+        replayVoiceBtn.addEventListener('click', () => {
+            playSound('click');
+            playVoiceRoast(state.cookedScore);
+        });
+    }
+
+    // ----------------------------------------------------------------------
+    // 11. SUSPENSE TRANSITION & RESULT RENDERING
     // ----------------------------------------------------------------------
     calculateTriggerBtn.addEventListener('click', () => {
         if (state.dailyHours === 0 && state.studiedPercent < 90) {
@@ -598,6 +903,7 @@ document.addEventListener('DOMContentLoaded', () => {
             renderResults();
             switchView('result');
             playSound('reveal');
+            playVoiceRoast(state.cookedScore);
         }, 1400);
     });
 
@@ -655,14 +961,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderResults() {
         const score = state.cookedScore;
 
-        // 1. Animate Score Counter
         let currentCount = 0;
         const duration = 1200;
         const startTime = performance.now();
 
         function animateCounter(now) {
             const progress = Math.min((now - startTime) / duration, 1);
-            // Ease out cubic
             const easeOut = 1 - Math.pow(1 - progress, 3);
             currentCount = Math.round(easeOut * score);
             resultScoreVal.textContent = currentCount;
@@ -675,12 +979,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         requestAnimationFrame(animateCounter);
 
-        // 2. Animate Circular Meter SVG
-        const circumference = 2 * Math.PI * 94; // ~590.62
+        const circumference = 2 * Math.PI * 94;
         const targetOffset = circumference - (score / 100) * circumference;
         meterSvgStroke.style.strokeDashoffset = targetOffset;
 
-        // 3. Verdict Tier Styling & Text
         let activeTier = scoreTiers[scoreTiers.length - 1];
         for (let tier of scoreTiers) {
             if (score <= tier.max) {
@@ -695,7 +997,6 @@ document.addEventListener('DOMContentLoaded', () => {
         verdictTierBadge.style.borderColor = activeTier.border;
         verdictTierBadge.style.background = activeTier.bg;
 
-        // 4. Statistics Breakdown Grid
         statDaysVal.textContent = `${state.daysLeft}d`;
         statSyllabusVal.textContent = `${100 - state.studiedPercent}%`;
         statHoursVal.textContent = `${state.dailyHours}h`;
@@ -703,29 +1004,23 @@ document.addEventListener('DOMContentLoaded', () => {
         const basicsLabels = { none: 'NOT REALLY', some: 'SOMEWHAT', yes: 'YES' };
         statBasicsVal.textContent = basicsLabels[state.basicsKnowledge] || 'SOMEWHAT';
 
-        // 5. "Why?" Factors Breakdown
-        // Time pressure factor
         const timeFactor = Math.min(100, Math.max(10, Math.round(100 - (state.daysLeft / 20) * 100)));
         factorTimePct.textContent = `${timeFactor}%`;
         factorTimeBar.style.width = `${timeFactor}%`;
 
-        // Study completed factor
         factorStudyPct.textContent = `${state.studiedPercent}%`;
         factorStudyBar.style.width = `${state.studiedPercent}%`;
 
-        // Syllabus size factor
         const syllabusFactorMap = { small: 25, medium: 50, large: 75, massive: 95 };
         const syllabusFactor = syllabusFactorMap[state.syllabusSize] || 50;
         factorSyllabusPct.textContent = `${syllabusFactor}%`;
         factorSyllabusBar.style.width = `${syllabusFactor}%`;
 
-        // Foundation factor
         const basicsFactorMap = { yes: 20, some: 55, none: 90 };
         const basicsFactor = basicsFactorMap[state.basicsKnowledge] || 55;
         factorBasicsPct.textContent = `${basicsFactor}%`;
         factorBasicsBar.style.width = `${basicsFactor}%`;
 
-        // 6. Dynamic Personalized Survival Plan
         const remainingSyllabus = 100 - state.studiedPercent;
         plan1Title.textContent = `Finish the remaining ${remainingSyllabus}% syllabus`;
         plan1Desc.textContent = remainingSyllabus > 0
@@ -746,7 +1041,266 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ----------------------------------------------------------------------
-    // 8. SHARE & RE-TAKE INTERACTIONS
+    // 12. 25-MIN POMODORO LOCK-IN SPRINT TIMER
+    // ----------------------------------------------------------------------
+    function formatTime(seconds) {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    }
+
+    timerToggleBtn.addEventListener('click', () => {
+        playSound('click');
+        if (state.timerRunning) {
+            clearInterval(state.timerInterval);
+            state.timerRunning = false;
+            timerToggleBtn.textContent = 'RESUME SPRINT 🚀';
+        } else {
+            state.timerRunning = true;
+            timerToggleBtn.textContent = 'PAUSE SPRINT ⏸';
+            state.timerInterval = setInterval(() => {
+                state.timerSeconds--;
+                timerDigitsDisplay.textContent = formatTime(state.timerSeconds);
+                if (state.timerSeconds <= 0) {
+                    clearInterval(state.timerInterval);
+                    state.timerRunning = false;
+                    playSound('bell');
+                    showToast('🎉', 'Sprint complete! Take a 5-min breather.', 4000);
+                    state.timerSeconds = 25 * 60;
+                    timerToggleBtn.textContent = 'START NEW SPRINT 🚀';
+                }
+            }, 1000);
+        }
+    });
+
+    // ----------------------------------------------------------------------
+    // 13. ALL-NIGHTER SIMULATOR (CRAM VS SLEEP)
+    // ----------------------------------------------------------------------
+    if (cramSleepSlider) {
+        cramSleepSlider.addEventListener('input', (e) => {
+            const hrs = parseFloat(e.target.value);
+            cramHoursDisplay.textContent = `${hrs} hours`;
+
+            const alertness = Math.min(100, Math.round(15 + (hrs / 8) * 85));
+            const retention = Math.min(100, Math.round(10 + Math.pow(hrs / 8, 1.3) * 90));
+
+            cramAlertnessVal.textContent = `${alertness}%`;
+            cramAlertnessFill.style.width = `${alertness}%`;
+            cramRetentionVal.textContent = `${retention}%`;
+            cramRetentionFill.style.width = `${retention}%`;
+
+            if (hrs < 2) {
+                cramCrashVal.textContent = 'EXTREME 🚨';
+                cramCrashVal.style.color = '#f43f5e';
+                cramAdviceText.textContent = '"All-nighters reduce test performance by up to 40%. Sleep at least 90 mins for REM memory consolidation."';
+            } else if (hrs < 5) {
+                cramCrashVal.textContent = 'HIGH 🔥';
+                cramCrashVal.style.color = '#ff9a3c';
+                cramAdviceText.textContent = '"4 hours gets you in the door, but take 90-minute sleep cycles to avoid heavy morning brain fog."';
+            } else {
+                cramCrashVal.textContent = 'LOW ☕';
+                cramCrashVal.style.color = '#10b981';
+                cramAdviceText.textContent = '"Optimal sleep zone! Your hippocampus can actually index the notes you reviewed today."';
+            }
+        });
+    }
+
+    // ----------------------------------------------------------------------
+    // 14. GRADE SAVER FINAL EXAM CALCULATOR
+    // ----------------------------------------------------------------------
+    function updateGradeSaver() {
+        const cur = parseFloat(gsCurrentGrade.value) || 0;
+        const target = parseFloat(gsTargetGrade.value) || 0;
+        const weight = parseFloat(gsFinalWeight.value) || 40;
+
+        if (weight <= 0) return;
+        const needed = (target - (cur * (100 - weight) / 100)) / (weight / 100);
+        const rounded = Math.round(needed * 10) / 10;
+
+        gsNeededScore.textContent = `${rounded}%`;
+
+        if (rounded <= 50) {
+            gsVerdictTag.textContent = 'VERY ACHIEVABLE 😎';
+            gsVerdictTag.style.color = '#10b981';
+        } else if (rounded <= 75) {
+            gsVerdictTag.textContent = 'DOABLE WITH SOLID REVISION ⚡';
+            gsVerdictTag.style.color = '#ff9a3c';
+        } else if (rounded <= 90) {
+            gsVerdictTag.textContent = 'MAJOR LOCK-IN REQUIRED 🔥';
+            gsVerdictTag.style.color = '#ef4444';
+        } else if (rounded <= 100) {
+            gsVerdictTag.textContent = 'ACADEMIC WEAPON MIRACLE NEEDED 💀';
+            gsVerdictTag.style.color = '#f43f5e';
+        } else {
+            gsVerdictTag.textContent = 'MATHEMATICALLY COOKED 🪦';
+            gsVerdictTag.style.color = '#f43f5e';
+        }
+    }
+
+    if (gsCurrentGrade) {
+        [gsCurrentGrade, gsTargetGrade, gsFinalWeight].forEach(input => {
+            input.addEventListener('input', updateGradeSaver);
+        });
+    }
+
+    // ----------------------------------------------------------------------
+    // 15. EMERGENCY PROFESSOR EXCUSE GENERATOR
+    // ----------------------------------------------------------------------
+    const excusesList = [
+        "My laptop decided that 2 AM before the exam was the optimal moment to initiate a 4-hour critical OS firmware update.",
+        "My building's Wi-Fi router suffered an existential crisis and factory-reset itself right during my study upload.",
+        "I was reviewing notes so intensely that my alarm thought I was in REM sleep and respectfully chose not to disturb me.",
+        "A stray neighborhood cat climbed onto my surge protector and stepped directly onto the master power switch.",
+        "My cloud drive desynced and restored an empty folder from 2021 as my master study archive.",
+        "I caught a rare temporary strain of seasonal acute amnesia that only affects chapter 4 through 8."
+    ];
+
+    if (genExcuseBtn) {
+        genExcuseBtn.addEventListener('click', () => {
+            playSound('click');
+            state.excuseIndex = (state.excuseIndex + 1) % excusesList.length;
+            excuseTextDisplay.textContent = `"${excusesList[state.excuseIndex]}"`;
+        });
+    }
+
+    if (copyExcuseBtn) {
+        copyExcuseBtn.addEventListener('click', async () => {
+            playSound('click');
+            const text = excuseTextDisplay.textContent;
+            try {
+                if (navigator.clipboard) await navigator.clipboard.writeText(text);
+                showToast('📋', 'Excuse copied to clipboard!');
+            } catch (e) {}
+        });
+    }
+
+    // Toolkit Tabs Switching
+    suiteTabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+            playSound('click');
+            suiteTabBtns.forEach(b => b.classList.remove('active'));
+            suiteTabPanels.forEach(p => p.classList.remove('active'));
+
+            btn.classList.add('active');
+            const tabId = btn.getAttribute('data-tab');
+            const panel = document.getElementById(tabId);
+            if (panel) panel.classList.add('active');
+        });
+    });
+
+    // ----------------------------------------------------------------------
+    // 16. DOWNLOAD OFFICIAL COOKED CARD PNG (HTML5 CANVAS)
+    // ----------------------------------------------------------------------
+    if (downloadCardBtn) {
+        downloadCardBtn.addEventListener('click', () => {
+            playSound('click');
+            const canvas = document.getElementById('cooked-card-canvas');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const score = state.cookedScore;
+            const days = state.daysLeft;
+
+            // 1. Dark Velvet Background
+            ctx.fillStyle = '#09090b';
+            ctx.fillRect(0, 0, 800, 600);
+
+            // Subtle gradient overlay
+            const grad = ctx.createRadialGradient(400, 200, 50, 400, 200, 450);
+            grad.addColorStop(0, 'rgba(255, 107, 0, 0.15)');
+            grad.addColorStop(1, 'rgba(9, 9, 11, 0)');
+            ctx.fillStyle = grad;
+            ctx.fillRect(0, 0, 800, 600);
+
+            // 2. Border
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.12)';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(30, 30, 740, 540);
+
+            // 3. Header Branding
+            ctx.fillStyle = '#ff9a3c';
+            ctx.font = 'bold 24px monospace';
+            ctx.fillText('🔥 AM I COOKED? — OFFICIAL DIAGNOSTIC REPORT', 60, 80);
+
+            ctx.fillStyle = '#64748b';
+            ctx.font = '14px sans-serif';
+            ctx.fillText('Exam Readiness & Academic Emergency Survival Report', 60, 110);
+
+            // 4. Large Circular Cooked Gauge in center
+            ctx.beginPath();
+            ctx.arc(400, 260, 90, 0, Math.PI * 2);
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)';
+            ctx.lineWidth = 14;
+            ctx.stroke();
+
+            ctx.beginPath();
+            const arcEnd = -Math.PI / 2 + (score / 100) * (Math.PI * 2);
+            ctx.arc(400, 260, 90, -Math.PI / 2, arcEnd);
+            ctx.strokeStyle = score > 60 ? '#ff5722' : (score > 30 ? '#f59e0b' : '#10b981');
+            ctx.lineWidth = 14;
+            ctx.stroke();
+
+            // Center Score Text
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 54px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(`${score}%`, 400, 275);
+
+            ctx.fillStyle = '#ff9a3c';
+            ctx.font = 'bold 14px monospace';
+            ctx.fillText('COOKED SCORE', 400, 305);
+
+            // 5. Verdict Tier
+            let verdictLabel = "YOU'RE COOKED 🫠";
+            if (score <= 20) verdictLabel = "YOU'RE CHILLING 😎";
+            else if (score <= 40) verdictLabel = "LIGHTLY TOASTED 🍞";
+            else if (score <= 60) verdictLabel = "GETTING WARM 🔥";
+            else if (score <= 80) verdictLabel = "YOU'RE COOKED 🫠";
+            else if (score <= 95) verdictLabel = "DEEP FRIED 💀";
+            else verdictLabel = "ACADEMIC EMERGENCY 🚨";
+
+            ctx.fillStyle = '#f8fafc';
+            ctx.font = 'bold 22px sans-serif';
+            ctx.fillText(verdictLabel, 400, 390);
+
+            // 6. Metrics Row
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.04)';
+            ctx.fillRect(60, 430, 680, 80);
+
+            ctx.textAlign = 'left';
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 18px monospace';
+            ctx.fillText(`${days} DAYS`, 90, 465);
+            ctx.fillText(`${100 - state.studiedPercent}% REMAINING`, 260, 465);
+            ctx.fillText(`${state.dailyHours}h / DAY`, 490, 465);
+            ctx.fillText(`${state.basicsKnowledge.toUpperCase()}`, 640, 465);
+
+            ctx.fillStyle = '#64748b';
+            ctx.font = '11px sans-serif';
+            ctx.fillText('TIME LEFT', 90, 490);
+            ctx.fillText('SYLLABUS', 260, 490);
+            ctx.fillText('CAPACITY', 490, 490);
+            ctx.fillText('BASICS', 640, 490);
+
+            // 7. Footer Watermark
+            ctx.textAlign = 'center';
+            ctx.fillStyle = '#475569';
+            ctx.font = '12px monospace';
+            ctx.fillText('am-i-cooked-ten.vercel.app • Know your exam situation before it knows you', 400, 545);
+
+            // 8. Download PNG
+            const dataUrl = canvas.toDataURL('image/png');
+            const link = document.createElement('a');
+            link.download = `am-i-cooked-report-${score}pct.png`;
+            link.href = dataUrl;
+            link.click();
+
+            showToast('📸', 'Cooked Card PNG downloaded!');
+        });
+    }
+
+    // ----------------------------------------------------------------------
+    // 17. SHARE & RE-TAKE INTERACTIONS
     // ----------------------------------------------------------------------
     function getShareText() {
         const score = state.cookedScore;
@@ -796,11 +1350,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     text: text,
                     url: window.location.href
                 });
-            } catch (e) {
-                // User cancelled share
-            }
+            } catch (e) {}
         } else {
-            // Fallback to copy
             copyResultBtn.click();
         }
     });
@@ -812,7 +1363,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ----------------------------------------------------------------------
-    // 9. FUN MICRO-INTERACTIONS & TOASTS
+    // 18. FUN MICRO-INTERACTIONS & TOASTS
     // ----------------------------------------------------------------------
     let toastTimeout = null;
 
@@ -838,7 +1389,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // ----------------------------------------------------------------------
-    // 10. MODAL DIALOGS
+    // 19. MODAL DIALOGS
     // ----------------------------------------------------------------------
     function openModal(modal) {
         playSound('click');
@@ -853,6 +1404,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     howItWorksBtn.addEventListener('click', () => openModal(howModal));
+    if (toolsModalBtn) {
+        toolsModalBtn.addEventListener('click', () => {
+            switchView('result');
+            const el = document.querySelector('.extra-suite-card');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+        });
+    }
     aboutBtn.addEventListener('click', () => openModal(aboutModal));
 
     modalCloseButtons.forEach(btn => {
@@ -862,7 +1420,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    [howModal, aboutModal].forEach(modal => {
+    [ambientModal, howModal, aboutModal].forEach(modal => {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 closeModal(modal);
@@ -870,16 +1428,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Close on Escape key
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
+            if (ambientModal.style.display === 'flex') closeModal(ambientModal);
             if (howModal.style.display === 'flex') closeModal(howModal);
             if (aboutModal.style.display === 'flex') closeModal(aboutModal);
         }
     });
 
     // ----------------------------------------------------------------------
-    // 11. SUBTLE AMBIENT CANVAS PARTICLES (RESTFUL FLOATING EMBERS)
+    // 20. SUBTLE AMBIENT CANVAS PARTICLES (RESTFUL FLOATING EMBERS)
     // ----------------------------------------------------------------------
     const canvas = document.getElementById('ambient-canvas');
     if (canvas) {
@@ -892,7 +1450,6 @@ document.addEventListener('DOMContentLoaded', () => {
             height = canvas.height = window.innerHeight;
         });
 
-        // 35 subtle slow-moving warm ember particles
         const particles = [];
         const particleCount = Math.min(30, Math.floor(window.innerWidth / 40));
 
@@ -904,7 +1461,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 alpha: Math.random() * 0.35 + 0.1,
                 vx: (Math.random() - 0.5) * 0.2,
                 vy: -Math.random() * 0.3 - 0.1,
-                hue: Math.random() > 0.6 ? 24 : 14 // warm orange / fire tones
+                hue: Math.random() > 0.6 ? 24 : 14
             });
         }
 
@@ -917,7 +1474,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 p.x += p.vx;
                 p.y += p.vy;
 
-                // Wrap around edges
                 if (p.y < 0) {
                     p.y = height;
                     p.x = Math.random() * width;
@@ -936,7 +1492,6 @@ document.addEventListener('DOMContentLoaded', () => {
             animationFrameId = requestAnimationFrame(animateAmbient);
         }
 
-        // Only run animation if user doesn't prefer reduced motion
         const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         if (!prefersReducedMotion) {
             animateAmbient();
@@ -944,7 +1499,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     // ----------------------------------------------------------------------
-    // 12. INITIALIZATION
+    // 21. INITIALIZATION
     // ----------------------------------------------------------------------
     initializeDefaultDate();
     updateStudySliderDisplay(studySlider.value);
