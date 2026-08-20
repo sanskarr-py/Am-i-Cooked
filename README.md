@@ -1,47 +1,63 @@
 # Am I Cooked? 🔥
 
-> **The Ultimate Exam Survival Calculator** — Find out exactly how doomed you are before your exam. 💀  
-> 🔗 Live App: [am-i-cooked-ten.vercel.app](https://am-i-cooked-ten.vercel.app/)
-
-![Am I Cooked Preview](https://img.shields.io/badge/Status-100%25%20Scientific-ff5c38?style=for-the-badge)
-![Built With](https://img.shields.io/badge/Built%20With-Vanilla%20HTML%20%7C%20CSS%20%7C%20JS-fbb03b?style=for-the-badge)
+> **"Know your exam situation before your exam knows you."**  
+> A playful, brutally honest, but genuinely useful exam-readiness calculator for students.
 
 ---
 
-## ⚡ Features
+## ⚡ Overview
 
-- 📅 **Exam Date & Live Countdown Tracker**: Real-time remaining hours and emergency panic window warnings.
-- 📚 **Syllabus & Basics Weighting**: Custom-tuned algorithms calculating workload density against panic thresholds.
-- 🎚️ **Live Heat Sliders & Presets**: Dynamic score preview badge that updates as you adjust your study progress.
-- 😴⚡ **"Cram vs. Sleep" All-Nighter Simulator**: Interactive trade-off matrix computing cognitive alertness vs memory retention penalty for overnight cramming.
-- 📊🎯 **Grade Saver & Final Exam Score Calculator**: Calculates the exact minimum score % needed on the final exam to pass or hit your target grade.
-- 🎧🌧️ **Panic Room Focus Ambient Audio**: Procedurally generated acoustic soundscapes (Heavy Rain 🌧️, Coffee Shop ☕, Binaural Beats 🪐, Synthwave ⚡) using Web Audio API synthesis.
-- 🎙️ **AI Voice Roast Engine**: Voice notes with realistic laughing acoustic synthesis and funny commentary for every score tier!
-- 📝 **Emergency Professor Excuse Generator**: 25+ non-repeating excuses with 1-click clipboard copy.
-- 📸🎨 **Downloadable Official Cooked Card PNG**: Generates a high-res shareable diagnostic report card image via HTML5 Canvas.
-- ⏱️ **25-Min "Lock-In" Pomodoro Sprint Timer**: Quick countdown widget for immediate cramming sessions.
-- 📡 **Live Submissions Ticker Feed**: Real-time community marquee with automatic user submission integration.
-- 💀 **Skeleton Favicon & Obsidian Aesthetic Theme**: Clean, responsive velvet obsidian design with glowing coral/amber fire effects.
+**Am I Cooked?** calculates your exact academic survival odds (0–100% Cooked Score) based on:
+1. **Exam Date** (days remaining countdown)
+2. **Syllabus Size** (Small, Medium, Large, Massive)
+3. **Study Progress** (brutally honest % completed)
+4. **Foundation Knowledge** (Do you know the basics?)
+5. **Real-world Available Study Time** (sustainable hours per day)
+
+Designed with a minimal dark-first aesthetic inspired by Linear, Vercel, and Raycast.
 
 ---
 
-## 🚀 Getting Started
+## 🎯 Key Features
 
-Simply open `index.html` in any modern web browser or run a lightweight local server:
+- 🎛️ **Focused Multi-Step Flow**: Silky smooth 5-step guided calculator with persistent state, progress tracking, and validation.
+- 🔥 **Circular Cooked Meter (0–100%)**: Smoothly animating SVG gauge with color-coded tier states:
+  - `0–20%`: *You're chilling* 😎
+  - `21–40%`: *Lightly toasted* 🍞
+  - `41–60%`: *Getting warm* 🔥
+  - `61–80%`: *You're cooked* 🫠
+  - `81–95%`: *Deep fried* 💀
+  - `96–100%`: *Academic emergency* 🚨
+- 📊 **"Why?" Factor Breakdown**: Visual progress bars showing how time remaining, syllabus size, progress, and foundation impact your risk level.
+- 📋 **Personalized Survival Action Plan**: Calibrated recommendations for topic prioritization, daily time-blocking, and revision buffers.
+- 🔗 **Instant 1-Click Sharing**: Copy formatted status or trigger native Web Share for Discord, WhatsApp, and X.
+- 💀 **"I'm Procrastinating" Micro-interaction**: Quick reality-check toast alert.
+- 🔊 **Synthetic Web Audio FX**: Crisp tactile clicks and suspense audio cues using pure Web Audio API synthesis (with sound toggle).
+- 🎨 **Minimal Obsidian & Ember Aesthetic**: Glassmorphism cards, restrained warm fire glow, Geist Mono / Inter typography.
+
+---
+
+## 🚀 Running Locally
+
+No npm dependencies or build steps required. Simply open `index.html` in any browser or launch a local server:
 
 ```bash
-npx http-server .
+# Using Python
+python -m http.server 3000
+
+# Or using npx
+npx serve .
 ```
 
-Visit `http://localhost:8080` in your browser.
+Visit `http://localhost:3000` in your browser.
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **HTML5** — Semantic structure
-- **CSS3** — Custom design tokens, glassmorphism, responsive grid & flex layouts
-- **JavaScript (ES6+)** — Web Audio API acoustic synthesis, Web Speech API voice phonetics, and state management
+- **HTML5** (Semantic structure, SVG gauges, accessibility tags)
+- **Vanilla CSS** (Custom properties, 8px spacing, glassmorphism, responsive breakpoints)
+- **Vanilla JavaScript (ES6+)** (State machine, deterministic algorithm, Web Audio API synthesis)
 
 ---
 

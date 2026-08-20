@@ -1,551 +1,629 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Am I Cooked? 🔥 | The Ultimate Exam Survival Calculator</title>
-    <meta name="description" content="Find out exactly how doomed you are before your exam. An interactive, funny diagnostic tool with live roast engine, survival plans, and excuses.">
+    <title>Am I Cooked? 🔥 — Know your exam situation before your exam knows you</title>
+    <meta name="description" content="A playful but genuinely useful exam-readiness calculator for students. Enter your exam date, syllabus size, and study habits to calculate your Cooked Score.">
+    <meta name="theme-color" content="#09090b">
     
-    <!-- Skeleton / Skull Favicon -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💀</text></svg>">
+    <!-- Open Graph / Social Meta -->
+    <meta property="og:title" content="Am I Cooked? 🔥 — Exam Readiness Calculator">
+    <meta property="og:description" content="Know your exam situation before your exam knows you. Calculate your exact Cooked Score from 0 to 100%.">
+    <meta property="og:type" content="website">
+
+    <!-- Favicon -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔥</text></svg>">
     
-    <!-- Google Fonts -->
+    <!-- Google Fonts: Inter & Geist Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&family=Montserrat:wght@700;800;900&family=Space+Grotesk:wght@600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Stylesheet -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Background Canvas & Animated Mesh Lights -->
-    <div class="mesh-bg">
-        <div class="mesh-orb orb-1"></div>
-        <div class="mesh-orb orb-2"></div>
-        <div class="mesh-orb orb-3"></div>
+    <!-- Abstract Ambient Glow & Subtle Grid Background -->
+    <div class="ambient-glow" aria-hidden="true">
+        <div class="glow-orb glow-top"></div>
+        <div class="glow-orb glow-bottom"></div>
+        <div class="subtle-grid"></div>
     </div>
-    <canvas id="ember-canvas"></canvas>
+    <canvas id="ambient-canvas" aria-hidden="true"></canvas>
 
-    <!-- Top Live Status & Nav Bar -->
-    <div class="top-nav-container">
-        <div class="top-nav">
-            <div class="brand">
-                <span class="brand-flame">🔥</span>
-                <span class="brand-text">AM I COOKED?</span>
-                <span class="brand-version">v3.0</span>
-            </div>
+    <!-- Top Navigation Bar -->
+    <header class="navbar-wrapper">
+        <nav class="navbar" aria-label="Main Navigation">
+            <a href="#" class="nav-brand" id="nav-brand-btn" aria-label="Am I Cooked Home">
+                <span class="brand-flame" aria-hidden="true">🔥</span>
+                <span class="brand-name">Am I Cooked?</span>
+            </a>
 
-            <!-- Live Cooked Preview Indicator -->
-            <div class="live-preview-pill" id="live-meter-pill">
-                <span class="pill-dot"></span>
-                <span class="pill-text">LIVE LEVEL:</span>
-                <span class="pill-value" id="live-level-val">WARM 45%</span>
-            </div>
-
-            <div class="nav-actions">
-                <button id="sound-btn" class="nav-btn sound-toggle active" type="button" title="Toggle Sound & Voice">
-                    <span id="sound-icon">🔊</span>
-                    <span id="sound-text">AUDIO ON</span>
-                </button>
-                <button id="ambient-btn" class="nav-btn ambient-toggle" type="button" title="Toggle Panic Room Ambient Focus Audio">
-                    <span>🎧</span>
-                    <span id="ambient-text">FOCUS AUDIO</span>
-                </button>
-                <button id="procrastinate-btn" class="nav-btn procrastinate-btn" type="button">
+            <div class="nav-right">
+                <button type="button" class="nav-link" id="how-it-works-btn">How it works</button>
+                <button type="button" class="nav-link" id="about-btn">About</button>
+                <button type="button" class="nav-btn-procrastinate" id="procrastinate-trigger-btn" title="Don't click this if you should be studying">
                     <span>💀</span>
-                    <span>I'M PROCRASTINATING</span>
+                    <span class="btn-text">I'm Procrastinating</span>
+                </button>
+                <button type="button" class="nav-cta-btn" id="nav-cta-btn">Check My Status</button>
+                <button type="button" class="sound-toggle-btn" id="sound-toggle" aria-label="Toggle Sound Effects" title="Toggle audio cues">
+                    <span class="sound-icon" id="sound-icon-display">🔊</span>
                 </button>
             </div>
-        </div>
-    </div>
+        </nav>
+    </header>
 
-    <!-- POLISHED LIVE ACTIVITY TICKER -->
-    <div class="ticker-wrapper">
-        <div class="ticker-prefix">
-            <span class="live-recording-dot"></span>
-            <span class="ticker-title">LIVE ROAST FEED</span>
-        </div>
-        <div class="ticker-viewport">
-            <div class="ticker-track" id="live-ticker-track">
-                <!-- Injected via JavaScript for seamless loop & dynamic updates -->
-            </div>
-        </div>
-    </div>
-
-    <div class="main-wrapper">
-        <!-- HERO SECTION -->
-        <header class="hero-section">
-            <div class="hero-badge">
-                <span class="badge-flame-icon">⚡</span>
-                <span>ACADEMIC CRISIS DIAGNOSTIC SIMULATOR</span>
-            </div>
-            
-            <h1 class="hero-headline">
-                HOW <span class="gradient-text">COOKED</span> ARE YOU?
-            </h1>
-            
-            <p class="hero-description">
-                Input your exam date, syllabus weight, and study progress to calculate your exact survival odds with live voice commentary.
-            </p>
-            <p class="hero-tagline">"100% scientific. 0% judgement. High probability of emotional damage." 💀</p>
-        </header>
-
-        <!-- MAIN INTERACTIVE CALCULATOR CARD -->
-        <main class="card-container" id="calculator-form">
-            <!-- 01 EXAM DATE -->
-            <div class="input-card">
-                <div class="card-header">
-                    <div class="step-badge">01</div>
-                    <div class="header-text">
-                        <label for="exam-date" class="step-title">When is your exam?</label>
-                        <span class="step-subtitle">The clock is actively ticking against you</span>
-                    </div>
-                </div>
-                <div class="date-row">
-                    <input type="date" id="exam-date" class="date-picker-input" required>
-                    <div class="countdown-card" id="countdown-card">
-                        <span class="countdown-pulse"></span>
-                        <div class="countdown-details">
-                            <span class="countdown-number" id="countdown-text">7 DAYS LEFT</span>
-                            <span class="countdown-sub" id="countdown-sub">168 HOURS REMAINING</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="roast-badge" id="roast-date">"Panic window is officially open 🔥"</div>
-            </div>
-
-            <!-- 02 SYLLABUS SIZE -->
-            <div class="input-card">
-                <div class="card-header">
-                    <div class="step-badge">02</div>
-                    <div class="header-text">
-                        <span class="step-title">How massive is the syllabus?</span>
-                        <span class="step-subtitle">Be honest. Denial won't reduce chapter counts</span>
-                    </div>
-                </div>
-                <div class="grid-options syllabus-grid">
-                    <div class="choice-card syllabus-choice" data-value="small">
-                        <div class="choice-icon-wrap icon-green">🟢</div>
-                        <div class="choice-content">
-                            <div class="choice-name">Small</div>
-                            <div class="choice-desc">Just a few slides / topics</div>
-                        </div>
-                    </div>
-                    <div class="choice-card syllabus-choice active" data-value="medium">
-                        <div class="choice-icon-wrap icon-gold">🟡</div>
-                        <div class="choice-content">
-                            <div class="choice-name">Medium</div>
-                            <div class="choice-desc">Standard midterm / final scope</div>
-                        </div>
-                    </div>
-                    <div class="choice-card syllabus-choice" data-value="large">
-                        <div class="choice-icon-wrap icon-orange">🟠</div>
-                        <div class="choice-content">
-                            <div class="choice-name">Large</div>
-                            <div class="choice-desc">Heavy textbook chapters</div>
-                        </div>
-                    </div>
-                    <div class="choice-card syllabus-choice" data-value="massive">
-                        <div class="choice-icon-wrap icon-red">🔴</div>
-                        <div class="choice-content">
-                            <div class="choice-name">Massive 💀</div>
-                            <div class="choice-desc">Everything taught this semester</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="roast-badge" id="roast-syllabus">"Standard academic pain. Manageable if you lock in."</div>
-            </div>
-
-            <!-- 03 STUDY PROGRESS -->
-            <div class="input-card">
-                <div class="card-header">
-                    <div class="step-badge">03</div>
-                    <div class="header-text">
-                        <span class="step-title">How much have you studied so far?</span>
-                        <span class="step-subtitle">Reading the table of contents does not count</span>
-                    </div>
-                </div>
-                
-                <div class="slider-box">
-                    <div class="slider-top-row">
-                        <div class="slider-display">
-                            <span class="slider-pct" id="study-percent-text">25%</span>
-                            <span class="slider-label">STUDIED</span>
-                        </div>
-                        <div class="slider-status-quote" id="study-quote">"I've seen the syllabus."</div>
-                    </div>
-                    
-                    <div class="slider-track-wrap">
-                        <input type="range" id="study-slider" min="0" max="100" step="5" value="25" class="heat-range-slider">
-                    </div>
-                    
-                    <div class="preset-row">
-                        <button type="button" class="preset-btn" data-pct="0">0% 💀</button>
-                        <button type="button" class="preset-btn active" data-pct="25">25% 👀</button>
-                        <button type="button" class="preset-btn" data-pct="50">50% 📈</button>
-                        <button type="button" class="preset-btn" data-pct="75">75% 📚</button>
-                        <button type="button" class="preset-btn" data-pct="100">100% 🗿</button>
-                    </div>
-                </div>
-                <div class="roast-badge" id="roast-study">"You read the table of contents. Proud of you 👏"</div>
-            </div>
-
-            <!-- 04 BASICS KNOWLEDGE -->
-            <div class="input-card">
-                <div class="card-header">
-                    <div class="step-badge">04</div>
-                    <div class="header-text">
-                        <span class="step-title">Do you actually understand the fundamentals?</span>
-                        <span class="step-subtitle">Can you explain chapter 1 to a 5-year-old?</span>
-                    </div>
-                </div>
-                <div class="grid-options basics-grid">
-                    <div class="choice-card basics-choice" data-value="none">
-                        <div class="choice-icon-wrap icon-red">❌</div>
-                        <div class="choice-content">
-                            <div class="choice-name">Not really</div>
-                            <div class="choice-desc">Starting from literal zero</div>
-                        </div>
-                    </div>
-                    <div class="choice-card basics-choice active" data-value="little">
-                        <div class="choice-icon-wrap icon-gold">😐</div>
-                        <div class="choice-content">
-                            <div class="choice-name">A little</div>
-                            <div class="choice-desc">Vague memories from lectures</div>
-                        </div>
-                    </div>
-                    <div class="choice-card basics-choice" data-value="yes">
-                        <div class="choice-icon-wrap icon-green">✅</div>
-                        <div class="choice-content">
-                            <div class="choice-name">Yes, I understand</div>
-                            <div class="choice-desc">Solid grasp of core concepts</div>
-                        </div>
-                    </div>
-                </div>
-                <div class="roast-badge" id="roast-basics">"Vibes and guesswork mode active 🎲"</div>
-            </div>
-
-            <!-- 05 DAILY STUDY CAPACITY -->
-            <div class="input-card">
-                <div class="card-header">
-                    <div class="step-badge">05</div>
-                    <div class="header-text">
-                        <span class="step-title">Daily study capacity (Realistically)</span>
-                        <span class="step-subtitle">Subtract time for food, sleep, and TikTok scrolling</span>
-                    </div>
-                </div>
-                
-                <div class="slider-box">
-                    <div class="slider-top-row">
-                        <div class="slider-display">
-                            <span class="slider-pct" id="hours-text">4 hrs / day</span>
-                            <span class="slider-label">STUDY TIME</span>
-                        </div>
-                        <div class="slider-status-quote" id="hours-quote">Solid effort 💪</div>
-                    </div>
-                    
-                    <div class="slider-track-wrap">
-                        <input type="range" id="hours-slider" min="0" max="12" step="0.5" value="4" class="heat-range-slider">
-                    </div>
-                    
-                    <div class="ticks-row">
-                        <span>0h (Dangerous 💀)</span>
-                        <span>3h (Light ☕)</span>
-                        <span>6h (Solid 💪)</span>
-                        <span>9h (Weapon ⚔️)</span>
-                        <span>12h (Bot 🤖)</span>
-                    </div>
-                </div>
-                <div class="roast-badge" id="roast-hours">"Respectable effort. Let's see if your stamina holds up ☕"</div>
-            </div>
-
-            <!-- PANIC ROOM AMBIENT SOUND PLAYER -->
-            <div class="ambient-sound-card" id="ambient-sound-card">
-                <div class="ambient-header">
-                    <div class="ambient-title-wrap">
-                        <span class="ambient-icon">🎧</span>
-                        <div>
-                            <span class="ambient-title">PANIC ROOM FOCUS AUDIO</span>
-                            <span class="ambient-sub">Procedurally generated acoustic focus soundscapes to keep you locked in</span>
-                        </div>
-                    </div>
-                    <div class="ambient-equalizer" id="ambient-eq">
-                        <span class="eq-bar bar-1"></span>
-                        <span class="eq-bar bar-2"></span>
-                        <span class="eq-bar bar-3"></span>
-                        <span class="eq-bar bar-4"></span>
-                    </div>
-                </div>
-                <div class="ambient-options">
-                    <button type="button" class="ambient-chip active" data-sound="rain">🌧️ Heavy Rain</button>
-                    <button type="button" class="ambient-chip" data-sound="cafe">☕ Coffee Shop</button>
-                    <button type="button" class="ambient-chip" data-sound="binaural">🪐 Binaural Focus</button>
-                    <button type="button" class="ambient-chip" data-sound="lofi">⚡ Synthwave Hum</button>
-                    <button type="button" class="ambient-chip sound-stop" id="ambient-stop-btn">🛑 Stop</button>
-                </div>
-            </div>
-
-            <!-- CRAM VS SLEEP MATRIX -->
-            <div class="sleep-cram-widget">
-                <div class="widget-header-badge">
-                    <span class="widget-icon">😴⚡</span>
-                    <div>
-                        <h3 class="widget-title">ALL-NIGHTER CRAM VS SLEEP SIMULATOR</h3>
-                        <span class="widget-sub">Should you sleep 6 hours or cram until sunrise? Calculate your retention penalty</span>
-                    </div>
-                </div>
-                <div class="sleep-slider-container">
-                    <div class="slider-top-row">
-                        <span class="slider-label">PLANNED SLEEP:</span>
-                        <span class="slider-pct" id="sleep-hrs-text">3.0 Hours Sleep / 5.0 Hours Cram</span>
-                    </div>
-                    <div class="slider-track-wrap">
-                        <input type="range" id="sleep-slider" min="0" max="8" step="0.5" value="3" class="heat-range-slider">
-                    </div>
-                </div>
-                <div class="sleep-analytics-grid">
-                    <div class="analytics-card">
-                        <span class="analytics-title">🧠 Cognitive Alertness</span>
-                        <span class="analytics-val color-amber" id="alertness-val">55%</span>
-                    </div>
-                    <div class="analytics-card">
-                        <span class="analytics-title">📚 Memory Retention</span>
-                        <span class="analytics-val color-gold" id="retention-val">68%</span>
-                    </div>
-                    <div class="analytics-card">
-                        <span class="analytics-title">💀 All-Nighter Risk</span>
-                        <span class="analytics-val color-red" id="sleep-risk-val">HIGH RISK</span>
-                    </div>
-                </div>
-                <div class="roast-badge" id="sleep-verdict-text">"3 hours is the danger zone: enough sleep to feel groggy, not enough to function."</div>
-            </div>
-
-            <!-- GRADE SAVER & MINIMUM EXAM SCORE CALCULATOR -->
-            <div class="grade-saver-widget">
-                <div class="widget-header-badge">
-                    <span class="widget-icon">📊</span>
-                    <div>
-                        <h3 class="widget-title">GRADE SAVER: FINAL EXAM SCORE CALCULATOR</h3>
-                        <span class="widget-sub">Find out exactly what % you need on the final to pass or get your target grade</span>
-                    </div>
-                </div>
-                <div class="grade-input-grid">
-                    <div class="grade-field">
-                        <label for="current-grade-input">Current Grade (%):</label>
-                        <input type="number" id="current-grade-input" min="0" max="100" value="68" placeholder="e.g. 68">
-                    </div>
-                    <div class="grade-field">
-                        <label for="target-grade-input">Target Final Grade (%):</label>
-                        <input type="number" id="target-grade-input" min="0" max="100" value="70" placeholder="e.g. 70 (Pass)">
-                    </div>
-                    <div class="grade-field">
-                        <label for="exam-weight-input">Final Exam Weight (%):</label>
-                        <input type="number" id="exam-weight-input" min="1" max="100" value="30" placeholder="e.g. 30">
-                    </div>
-                </div>
-                <div class="grade-result-box" id="grade-result-box">
-                    <div class="grade-target-needed">
-                        <span class="grade-label">REQUIRED ON FINAL EXAM:</span>
-                        <span class="grade-val-badge" id="required-score-val">74.7%</span>
-                    </div>
-                    <p class="grade-verdict-quote" id="grade-verdict-quote">"Doable! You just need a solid B on the final."</p>
-                </div>
-            </div>
-
-            <!-- PRIMARY SUBMIT CTA -->
-            <div class="cta-container">
-                <button type="button" id="calculate-btn" class="epic-calculate-btn">
-                    <span class="btn-shine"></span>
-                    <span class="btn-text-content">
-                        <span>CALCULATE: AM I COOKED?</span>
-                        <span class="btn-fire-icon">🔥</span>
-                    </span>
-                </button>
-            </div>
-
-            <!-- EMERGENCY EXCUSE GENERATOR WIDGET -->
-            <div class="excuse-widget">
-                <div class="excuse-widget-header">
-                    <div class="excuse-title-block">
-                        <span class="excuse-emoji">📝</span>
-                        <div>
-                            <span class="excuse-main-title">EMERGENCY PROFESSOR EXCUSE GENERATOR</span>
-                            <span class="excuse-sub-title">Certified 100% believable excuses for exam delays</span>
-                        </div>
-                    </div>
-                    
-                    <div class="excuse-btn-group">
-                        <button type="button" id="excuse-btn" class="action-btn generate-btn">
-                            <span>Generate Excuse</span>
-                            <span>🎲</span>
-                        </button>
-                        <button type="button" id="copy-excuse-btn" class="action-btn copy-btn" title="Copy to clipboard">
-                            <span>📋</span>
-                            <span>Copy</span>
-                        </button>
-                    </div>
+    <!-- Main Content Container -->
+    <main class="app-container" id="main-content">
+        
+        <!-- ========================================== -->
+        <!-- VIEW 1: HERO / LANDING PAGE                -->
+        <!-- ========================================== -->
+        <section class="view-section hero-view active" id="hero-view" aria-label="Landing Page">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span class="badge-dot"></span>
+                    <span class="badge-text">THE EXAM SURVIVAL CALCULATOR</span>
                 </div>
 
-                <div class="excuse-speech-bubble" id="excuse-bubble">
-                    <p class="excuse-message" id="excuse-display">"Click 'Generate Excuse 🎲' to get an emergency excuse for your professor..."</p>
-                </div>
-            </div>
-        </main>
+                <h1 class="hero-title">
+                    How <span class="text-gradient-orange">cooked</span> are you?
+                </h1>
 
-        <!-- DRAMATIC RESULT SCREEN (Visible after calculation) -->
-        <section class="result-dashboard hidden" id="result-screen">
-            <!-- Result Header Banner -->
-            <div class="verdict-banner">
-                <span class="verdict-status-tag">DIAGNOSTIC REPORT FINALIZED</span>
-                
-                <!-- Circular Cooked Meter -->
-                <div class="meter-outer-ring">
-                    <div class="meter-halo-glow" id="meter-halo"></div>
-                    <svg class="meter-svg-element" viewBox="0 0 220 220">
-                        <circle class="meter-track-bg" cx="110" cy="110" r="90"></circle>
-                        <circle class="meter-fill-stroke" id="meter-circle" cx="110" cy="110" r="90" stroke-dasharray="565.48" stroke-dashoffset="565.48"></circle>
-                    </svg>
-                    <div class="meter-center-info">
-                        <span class="meter-fire-badge" id="meter-fire">🔥</span>
-                        <div class="meter-number-text" id="meter-score-text">0%</div>
-                        <span class="meter-sublabel">COOKED SCORE</span>
-                    </div>
+                <p class="hero-subtitle">
+                    Enter a few details about your exam and find out whether you’re chilling, under pressure, or completely cooked.
+                </p>
+
+                <div class="hero-cta-group">
+                    <button type="button" class="btn-primary-hero" id="hero-start-btn">
+                        <span>Find Out</span>
+                        <span class="btn-arrow" aria-hidden="true">→</span>
+                    </button>
+                    <p class="hero-footnote">No account. No signup. Just brutal honesty.</p>
                 </div>
 
-                <h2 class="verdict-headline" id="verdict-title">CALCULATING...</h2>
-                <p class="verdict-subheadline" id="verdict-subtitle">Analyzing workload density against panic thresholds...</p>
-
-                <!-- Dedicated AI Voice Note Roast Box -->
-                <div class="voice-roast-card" id="voice-roast-box">
-                    <div class="voice-header-row">
-                        <div class="voice-indicator">
-                            <span class="voice-icon">🎙️</span>
-                            <span class="voice-tag">AI VOICE ROAST:</span>
-                            <div class="soundwave" id="soundwave-anim">
-                                <span class="bar bar-1"></span>
-                                <span class="bar bar-2"></span>
-                                <span class="bar bar-3"></span>
-                                <span class="bar bar-4"></span>
-                                <span class="bar bar-5"></span>
-                            </div>
-                        </div>
-                        <button type="button" id="replay-voice-btn" class="replay-btn" title="Replay Voice Note">
-                            <span>🔁</span> <span>Replay Voice</span>
-                        </button>
+                <!-- Minimalist Live Status Marquee / Feature Trust Badges -->
+                <div class="hero-stats-banner">
+                    <div class="stat-item">
+                        <span class="stat-number">100%</span>
+                        <span class="stat-label">Local & Private</span>
                     </div>
-                    <p class="voice-transcript" id="voice-transcript-text">"Analyzing your academic fate..."</p>
-                </div>
-
-                <!-- Daily Motivational Quote -->
-                <div class="quote-card">
-                    <span class="quote-spark">💡</span>
-                    <p class="quote-text" id="motivational-quote">"Lock in. The academic comeback starts now."</p>
-                </div>
-            </div>
-
-            <!-- Key Metrics Grid -->
-            <div class="metrics-dashboard-grid">
-                <div class="metric-box">
-                    <div class="metric-icon-wrap">📅</div>
-                    <div class="metric-data">
-                        <span class="metric-val" id="summary-days">0 days</span>
-                        <span class="metric-name">Time Remaining</span>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number">0–100</span>
+                        <span class="stat-label">Calibrated Score</span>
                     </div>
-                </div>
-                <div class="metric-box">
-                    <div class="metric-icon-wrap">📚</div>
-                    <div class="metric-data">
-                        <span class="metric-val" id="summary-syllabus">75%</span>
-                        <span class="metric-name">Syllabus Uncovered</span>
+                    <div class="stat-divider"></div>
+                    <div class="stat-item">
+                        <span class="stat-number">Instant</span>
+                        <span class="stat-label">Survival Plan</span>
                     </div>
-                </div>
-                <div class="metric-box">
-                    <div class="metric-icon-wrap">🧠</div>
-                    <div class="metric-data">
-                        <span class="metric-val" id="summary-basics">A little</span>
-                        <span class="metric-name">Foundational Basics</span>
-                    </div>
-                </div>
-                <div class="metric-box">
-                    <div class="metric-icon-wrap">⏰</div>
-                    <div class="metric-data">
-                        <span class="metric-val" id="summary-hours">4 hrs/day</span>
-                        <span class="metric-name">Study Capacity</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Survival Plan Checklist -->
-            <div class="survival-protocol-card">
-                <div class="protocol-header">
-                    <span class="protocol-icon">📋</span>
-                    <div>
-                        <h3 class="protocol-title">YOUR EMERGENCY SURVIVAL PROTOCOL</h3>
-                        <span class="protocol-sub">Custom tailored plan to avoid academic catastrophe</span>
-                    </div>
-                </div>
-                <ul class="protocol-checklist" id="survival-plan-list">
-                    <!-- Dynamic Survival Bullet Items -->
-                </ul>
-            </div>
-
-            <!-- Result Actions (Retry, Share, & Download PNG Card) -->
-            <div class="result-button-row">
-                <button type="button" id="retry-btn" class="result-action-btn recalculate-btn">
-                    <span>🔥 RECALCULATE / TRY AGAIN</span>
-                </button>
-                <button type="button" id="share-btn" class="result-action-btn share-score-btn">
-                    <span>📋 SHARE MY COOKED SCORE</span>
-                </button>
-                <button type="button" id="download-card-btn" class="result-action-btn download-card-btn">
-                    <span>📸 DOWNLOAD COOKED CARD (PNG)</span>
-                </button>
-            </div>
-
-            <!-- Quick Study Timer / Lock-In Pomodoro Widget -->
-            <div class="lockin-card">
-                <div class="lockin-left">
-                    <span class="lockin-flame">⏱️</span>
-                    <div>
-                        <div class="lockin-title">READY TO LOCK IN RIGHT NOW?</div>
-                        <div class="lockin-sub">Start a 25-minute emergency focus session</div>
-                    </div>
-                </div>
-                <div class="lockin-right">
-                    <span class="timer-digits" id="timer-display">25:00</span>
-                    <button type="button" id="timer-toggle-btn" class="timer-btn">START SPRINT 🚀</button>
                 </div>
             </div>
         </section>
 
-        <!-- FOOTER -->
-        <footer class="site-footer">
-            <p>Made for students burning the midnight oil ☕ | Powered by pure adrenaline & caffeine.</p>
-        </footer>
-    </div>
+        <!-- ========================================== -->
+        <!-- VIEW 2: MULTI-STEP CALCULATOR              -->
+        <!-- ========================================== -->
+        <section class="view-section calculator-view" id="calculator-view" aria-label="Exam Calculator" style="display: none;">
+            <div class="calc-card">
+                <!-- Progress Header -->
+                <div class="calc-progress-header">
+                    <div class="progress-top-row">
+                        <button type="button" class="calc-back-btn" id="calc-back-btn" aria-label="Previous step">
+                            <span aria-hidden="true">←</span>
+                            <span>Back</span>
+                        </button>
+                        
+                        <div class="step-indicator" aria-live="polite">
+                            <span class="step-curr" id="step-number-display">01</span>
+                            <span class="step-sep">/</span>
+                            <span class="step-total">05</span>
+                        </div>
+                    </div>
 
-    <!-- PROCRASTINATION EASTER EGG MODAL -->
-    <div class="modal-overlay hidden" id="procrastinate-modal">
-        <div class="modal-box">
-            <div class="modal-skull-icon">💀</div>
-            <h3 class="modal-heading">Bro...</h3>
-            <p class="modal-punchline">You are literally using this website instead of studying 💀</p>
-            <p class="modal-explanation">Every second spent clicking this button is a chapter unread and a grade point lost.</p>
-            <div class="modal-action-wrap">
-                <button type="button" id="close-modal-btn" class="modal-study-btn">
-                    Okay fine. I'm locking in now →
-                </button>
+                    <!-- Visual Progress Bar -->
+                    <div class="progress-track" role="progressbar" aria-valuemin="1" aria-valuemax="5" aria-valuenow="1" id="progress-bar-container">
+                        <div class="progress-fill" id="progress-fill-bar" style="width: 20%;"></div>
+                    </div>
+                </div>
+
+                <!-- Steps Slider Area -->
+                <div class="calc-step-body" id="calc-step-body">
+
+                    <!-- STEP 1: EXAM DATE -->
+                    <div class="step-panel active" id="step-1" data-step="1">
+                        <div class="step-heading-group">
+                            <span class="step-tag">Step 01</span>
+                            <h2 class="step-question">When is your exam?</h2>
+                            <p class="step-desc">Pick your upcoming test or final submission date.</p>
+                        </div>
+
+                        <div class="date-input-container">
+                            <div class="custom-date-field">
+                                <label for="exam-date-input" class="sr-only">Exam Date</label>
+                                <input type="date" id="exam-date-input" class="date-input" required>
+                            </div>
+
+                            <div class="quick-date-pills">
+                                <button type="button" class="date-preset-pill" data-days="1">Tomorrow</button>
+                                <button type="button" class="date-preset-pill" data-days="3">In 3 days</button>
+                                <button type="button" class="date-preset-pill" data-days="7">In 1 week</button>
+                                <button type="button" class="date-preset-pill" data-days="14">In 2 weeks</button>
+                                <button type="button" class="date-preset-pill" data-days="30">In 1 month</button>
+                            </div>
+
+                            <div class="dynamic-date-feedback" id="date-feedback-card">
+                                <div class="feedback-icon" id="date-feedback-icon">⏳</div>
+                                <div class="feedback-text">
+                                    <div class="feedback-highlight" id="date-days-text">12 days from now</div>
+                                    <div class="feedback-sub" id="date-sub-text">Plenty of time if you start today. Don't waste it.</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="step-actions">
+                            <button type="button" class="btn-step-next" id="step-1-next">
+                                <span>Continue</span>
+                                <span class="btn-arrow" aria-hidden="true">→</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 2: SYLLABUS SIZE -->
+                    <div class="step-panel" id="step-2" data-step="2">
+                        <div class="step-heading-group">
+                            <span class="step-tag">Step 02</span>
+                            <h2 class="step-question">How big is the syllabus?</h2>
+                            <p class="step-desc">Estimate the overall volume of course material.</p>
+                        </div>
+
+                        <div class="option-cards-grid grid-2x2" role="radiogroup" aria-label="Syllabus Size">
+                            <button type="button" class="option-card" data-syllabus="small" role="radio" aria-checked="false">
+                                <div class="card-icon-wrap">📄</div>
+                                <div class="card-text-wrap">
+                                    <h3 class="card-title">Small</h3>
+                                    <p class="card-subtitle">Under 5 major topics</p>
+                                </div>
+                                <div class="card-check-indicator" aria-hidden="true"></div>
+                            </button>
+
+                            <button type="button" class="option-card selected" data-syllabus="medium" role="radio" aria-checked="true">
+                                <div class="card-icon-wrap">📚</div>
+                                <div class="card-text-wrap">
+                                    <h3 class="card-title">Medium</h3>
+                                    <p class="card-subtitle">5–10 major topics</p>
+                                </div>
+                                <div class="card-check-indicator" aria-hidden="true"></div>
+                            </button>
+
+                            <button type="button" class="option-card" data-syllabus="large" role="radio" aria-checked="false">
+                                <div class="card-icon-wrap">🗂️</div>
+                                <div class="card-text-wrap">
+                                    <h3 class="card-title">Large</h3>
+                                    <p class="card-subtitle">10–20 major topics</p>
+                                </div>
+                                <div class="card-check-indicator" aria-hidden="true"></div>
+                            </button>
+
+                            <button type="button" class="option-card" data-syllabus="massive" role="radio" aria-checked="false">
+                                <div class="card-icon-wrap">🌋</div>
+                                <div class="card-text-wrap">
+                                    <h3 class="card-title">Massive</h3>
+                                    <p class="card-subtitle">I stopped counting.</p>
+                                </div>
+                                <div class="card-check-indicator" aria-hidden="true"></div>
+                            </button>
+                        </div>
+
+                        <div class="step-actions">
+                            <button type="button" class="btn-step-next" id="step-2-next">
+                                <span>Continue</span>
+                                <span class="btn-arrow" aria-hidden="true">→</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 3: STUDY PERCENTAGE -->
+                    <div class="step-panel" id="step-3" data-step="3">
+                        <div class="step-heading-group">
+                            <span class="step-tag">Step 03</span>
+                            <h2 class="step-question">How much have you actually studied?</h2>
+                            <p class="step-desc">Be brutally honest with your current progress.</p>
+                        </div>
+
+                        <div class="slider-experience-wrap">
+                            <div class="slider-display-number">
+                                <span class="number-val" id="study-slider-val">30</span>
+                                <span class="number-unit">%</span>
+                            </div>
+
+                            <div class="slider-dynamic-caption" id="study-slider-caption">
+                                "You've made a start."
+                            </div>
+
+                            <div class="range-slider-wrapper">
+                                <input type="range" min="0" max="100" value="30" step="1" id="study-range-input" class="premium-slider" aria-label="Percentage of syllabus studied">
+                            </div>
+
+                            <!-- Milestone Quick Pickers -->
+                            <div class="milestones-row">
+                                <button type="button" class="milestone-btn" data-val="0">0%</button>
+                                <button type="button" class="milestone-btn" data-val="25">25%</button>
+                                <button type="button" class="milestone-btn" data-val="50">50%</button>
+                                <button type="button" class="milestone-btn" data-val="75">75%</button>
+                                <button type="button" class="milestone-btn" data-val="100">100%</button>
+                            </div>
+                        </div>
+
+                        <div class="step-actions">
+                            <button type="button" class="btn-step-next" id="step-3-next">
+                                <span>Continue</span>
+                                <span class="btn-arrow" aria-hidden="true">→</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 4: BASICS KNOWLEDGE -->
+                    <div class="step-panel" id="step-4" data-step="4">
+                        <div class="step-heading-group">
+                            <span class="step-tag">Step 04</span>
+                            <h2 class="step-question">Do you know the basics?</h2>
+                            <p class="step-desc">Can you follow lectures or do you need to learn from scratch?</p>
+                        </div>
+
+                        <div class="option-cards-grid grid-3x1" role="radiogroup" aria-label="Knowledge of Basics">
+                            <button type="button" class="option-card" data-basics="none" role="radio" aria-checked="false">
+                                <div class="card-icon-wrap">🤷‍♂️</div>
+                                <div class="card-text-wrap">
+                                    <h3 class="card-title">NOT REALLY</h3>
+                                    <p class="card-subtitle">"I'll be honest."</p>
+                                </div>
+                                <div class="card-check-indicator" aria-hidden="true"></div>
+                            </button>
+
+                            <button type="button" class="option-card selected" data-basics="some" role="radio" aria-checked="true">
+                                <div class="card-icon-wrap">🧠</div>
+                                <div class="card-text-wrap">
+                                    <h3 class="card-title">SOMEWHAT</h3>
+                                    <p class="card-subtitle">"I know the fundamentals."</p>
+                                </div>
+                                <div class="card-check-indicator" aria-hidden="true"></div>
+                            </button>
+
+                            <button type="button" class="option-card" data-basics="yes" role="radio" aria-checked="false">
+                                <div class="card-icon-wrap">⚡</div>
+                                <div class="card-text-wrap">
+                                    <h3 class="card-title">YES</h3>
+                                    <p class="card-subtitle">"I can explain the basics."</p>
+                                </div>
+                                <div class="card-check-indicator" aria-hidden="true"></div>
+                            </button>
+                        </div>
+
+                        <div class="step-actions">
+                            <button type="button" class="btn-step-next" id="step-4-next">
+                                <span>Continue</span>
+                                <span class="btn-arrow" aria-hidden="true">→</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- STEP 5: DAILY STUDY HOURS -->
+                    <div class="step-panel" id="step-5" data-step="5">
+                        <div class="step-heading-group">
+                            <span class="step-tag">Step 05</span>
+                            <h2 class="step-question">How much time can you realistically study each day?</h2>
+                            <p class="step-desc">Sustainable daily commitment without burning out.</p>
+                        </div>
+
+                        <div class="slider-experience-wrap">
+                            <div class="slider-display-number">
+                                <span class="number-val" id="hours-slider-val">4</span>
+                                <span class="number-unit">hours/day</span>
+                            </div>
+
+                            <div class="range-slider-wrapper">
+                                <input type="range" min="0" max="12" value="4" step="0.5" id="hours-range-input" class="premium-slider" aria-label="Available daily study hours">
+                            </div>
+
+                            <div class="slider-micro-note">
+                                <span class="note-icon" aria-hidden="true">💡</span>
+                                <span>Be realistic. Your future self will thank you.</span>
+                            </div>
+                        </div>
+
+                        <!-- Final Calculation CTA -->
+                        <div class="step-actions final-action-group">
+                            <button type="button" class="btn-calculate-final" id="calculate-trigger-btn">
+                                <span class="btn-flame-icon">🔥</span>
+                                <span class="btn-label">AM I COOKED?</span>
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ========================================== -->
+        <!-- VIEW 3: SUSPENSE / LOADING ANIMATION       -->
+        <!-- ========================================== -->
+        <div class="suspense-overlay" id="suspense-overlay" aria-hidden="true" style="display: none;">
+            <div class="suspense-modal">
+                <div class="suspense-flame-ring">
+                    <div class="pulse-ring"></div>
+                    <span class="suspense-icon">🔥</span>
+                </div>
+                <h3 class="suspense-text" id="suspense-status-text">Analyzing your situation...</h3>
+                <div class="suspense-progress-line">
+                    <div class="suspense-line-inner"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- VIEW 4: RESULTS EXPERIENCE                 -->
+        <!-- ========================================== -->
+        <section class="view-section result-view" id="result-view" aria-label="Calculation Result" style="display: none;">
+            <div class="result-container">
+                
+                <!-- Main Result Hero Card -->
+                <div class="result-hero-card" id="result-hero-card">
+                    <div class="result-eyebrow">YOUR RESULT</div>
+
+                    <!-- Animated Circular Cooked Meter -->
+                    <div class="circular-meter-wrapper">
+                        <svg class="meter-svg" viewBox="0 0 240 240" aria-hidden="true">
+                            <defs>
+                                <linearGradient id="meterGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#ff9a3c" />
+                                    <stop offset="50%" stop-color="#ff5722" />
+                                    <stop offset="100%" stop-color="#f43f5e" />
+                                </linearGradient>
+                                <filter id="meterGlow" x="-20%" y="-20%" width="140%" height="140%">
+                                    <feGaussianBlur stdDeviation="8" result="blur" />
+                                    <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                                </filter>
+                            </defs>
+                            <!-- Background Track -->
+                            <circle class="meter-track" cx="120" cy="120" r="94" />
+                            <!-- Animated Value Stroke -->
+                            <circle class="meter-value-stroke" id="meter-svg-stroke" cx="120" cy="120" r="94" />
+                        </svg>
+
+                        <!-- Center Score Content -->
+                        <div class="meter-center-content">
+                            <div class="meter-score-row">
+                                <span class="meter-score-number" id="result-score-val">0</span>
+                                <span class="meter-score-symbol">%</span>
+                            </div>
+                            <div class="meter-score-label">COOKED</div>
+                        </div>
+                    </div>
+
+                    <!-- Verdict State Badge & Subtitle -->
+                    <div class="result-verdict-group">
+                        <div class="verdict-tier-badge" id="verdict-tier-badge">
+                            <span id="verdict-tier-text">You're cooked 🫠</span>
+                        </div>
+                        <p class="verdict-quote" id="verdict-quote-text">
+                            "You've entered dangerous territory."
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Statistics Grid (Breakdown) -->
+                <div class="stats-breakdown-grid">
+                    <div class="stat-card">
+                        <div class="stat-card-val" id="stat-days-val">12</div>
+                        <div class="stat-card-label">DAYS LEFT</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-val" id="stat-syllabus-val">70%</div>
+                        <div class="stat-card-label">SYLLABUS REMAINING</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-val" id="stat-hours-val">4h</div>
+                        <div class="stat-card-label">STUDY / DAY</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-val" id="stat-basics-val">SOMEWHAT</div>
+                        <div class="stat-card-label">BASICS</div>
+                    </div>
+                </div>
+
+                <!-- "Why?" Section -->
+                <div class="factors-card">
+                    <h3 class="section-card-title">Why this score?</h3>
+                    <p class="section-card-desc">How each factor contributes to your overall academic risk level.</p>
+
+                    <div class="factors-list">
+                        <!-- Factor 1: Time Remaining -->
+                        <div class="factor-row">
+                            <div class="factor-header">
+                                <span class="factor-name">Time remaining</span>
+                                <span class="factor-pct" id="factor-time-pct">60%</span>
+                            </div>
+                            <div class="factor-track">
+                                <div class="factor-bar" id="factor-time-bar" style="width: 60%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Factor 2: Study Completed -->
+                        <div class="factor-row">
+                            <div class="factor-header">
+                                <span class="factor-name">Study completed</span>
+                                <span class="factor-pct" id="factor-study-pct">30%</span>
+                            </div>
+                            <div class="factor-track">
+                                <div class="factor-bar" id="factor-study-bar" style="width: 30%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Factor 3: Syllabus Size -->
+                        <div class="factor-row">
+                            <div class="factor-header">
+                                <span class="factor-name">Syllabus size</span>
+                                <span class="factor-pct" id="factor-syllabus-pct">80%</span>
+                            </div>
+                            <div class="factor-track">
+                                <div class="factor-bar" id="factor-syllabus-bar" style="width: 80%;"></div>
+                            </div>
+                        </div>
+
+                        <!-- Factor 4: Foundation (Basics) -->
+                        <div class="factor-row">
+                            <div class="factor-header">
+                                <span class="factor-name">Foundation</span>
+                                <span class="factor-pct" id="factor-basics-pct">70%</span>
+                            </div>
+                            <div class="factor-track">
+                                <div class="factor-bar" id="factor-basics-bar" style="width: 70%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Personalized Survival Plan -->
+                <div class="survival-plan-card">
+                    <div class="plan-card-header">
+                        <div class="plan-badge">ACTION PLAN</div>
+                        <h3 class="section-card-title">Your survival plan</h3>
+                        <p class="section-card-desc">Calibrated advice based directly on your remaining time and workload.</p>
+                    </div>
+
+                    <div class="plan-steps-list" id="survival-plan-list">
+                        <!-- Step 01 -->
+                        <div class="plan-step-item">
+                            <div class="plan-step-num">01</div>
+                            <div class="plan-step-body">
+                                <h4 class="plan-step-title" id="plan-1-title">Finish the remaining syllabus</h4>
+                                <p class="plan-step-text" id="plan-1-desc">You have 70% left. Aim to cover the highest-weight topics first.</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 02 -->
+                        <div class="plan-step-item">
+                            <div class="plan-step-num">02</div>
+                            <div class="plan-step-body">
+                                <h4 class="plan-step-title" id="plan-2-title">Study 4 hours/day</h4>
+                                <p class="plan-step-text" id="plan-2-desc">Split your sessions into focused 50/10 Pomodoro blocks instead of marathon doom-sessions.</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 03 -->
+                        <div class="plan-step-item">
+                            <div class="plan-step-num">03</div>
+                            <div class="plan-step-body">
+                                <h4 class="plan-step-title" id="plan-3-title">Reserve the final 2 days</h4>
+                                <p class="plan-step-text" id="plan-3-desc">Use them strictly for active recall, timed past papers, and summary revision.</p>
+                            </div>
+                        </div>
+
+                        <!-- Step 04 -->
+                        <div class="plan-step-item">
+                            <div class="plan-step-num">04</div>
+                            <div class="plan-step-body">
+                                <h4 class="plan-step-title" id="plan-4-title">Stop procrastinating</h4>
+                                <p class="plan-step-text" id="plan-4-desc">Yes, that includes analyzing your cooked score on this website instead of opening the textbook.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Share & Actions Section -->
+                <div class="share-card">
+                    <h3 class="share-title">Think your friends are more cooked?</h3>
+                    <p class="share-subtitle">Compare your survival odds or send this as a wake-up call to your study group.</p>
+
+                    <div class="share-button-row">
+                        <button type="button" class="btn-share-action btn-copy-result" id="copy-result-btn">
+                            <span class="share-btn-icon" id="copy-btn-icon">📋</span>
+                            <span id="copy-btn-text">Copy Result</span>
+                        </button>
+
+                        <button type="button" class="btn-share-action btn-native-share" id="native-share-btn">
+                            <span class="share-btn-icon">🔗</span>
+                            <span>Share</span>
+                        </button>
+
+                        <button type="button" class="btn-share-action btn-retake" id="retake-calc-btn">
+                            <span class="share-btn-icon">↻</span>
+                            <span>Recalculate</span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ========================================== -->
+    <!-- MODALS & OVERLAYS                          -->
+    <!-- ========================================== -->
+
+    <!-- How It Works Modal -->
+    <div class="modal-backdrop" id="how-modal" aria-hidden="true" role="dialog" aria-labelledby="how-modal-title" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title" id="how-modal-title">How It Works</h3>
+                <button type="button" class="modal-close-btn" data-close-modal aria-label="Close modal">✕</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-para">The <strong>Cooked Score</strong> is computed through a deterministic study velocity model that weighs 5 key variables:</p>
+                <div class="formula-box">
+                    <code>Cooked Score = f(Workload Needed, Available Hours, Baseline Retention)</code>
+                </div>
+                <ul class="modal-bullets">
+                    <li><strong>Syllabus Density:</strong> Topics are estimated based on curriculum size and baseline study hours needed.</li>
+                    <li><strong>Foundation Multiplier:</strong> Lacking fundamentals adds a 1.35× to 1.8× multiplier on study time needed.</li>
+                    <li><strong>Time Deficit:</strong> Calculates whether your daily available hours can physically cover the required curriculum before exam morning.</li>
+                    <li><strong>Score Calibration:</strong> Normalizes from 0% (total safety) to 100% (academic emergency).</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-action" data-close-modal>Got it</button>
             </div>
         </div>
     </div>
 
-    <!-- OFFSCREEN CANVAS FOR PNG CARD GENERATION -->
-    <canvas id="cooked-card-canvas" width="800" height="600" style="display:none;"></canvas>
-
-    <!-- TOAST NOTIFICATION -->
-    <div class="floating-toast hidden" id="toast-notification">
-        <span class="toast-emoji">📋</span>
-        <span id="toast-message">Copied share text to clipboard!</span>
+    <!-- About Modal -->
+    <div class="modal-backdrop" id="about-modal" aria-hidden="true" role="dialog" aria-labelledby="about-modal-title" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3 class="modal-title" id="about-modal-title">About Am I Cooked?</h3>
+                <button type="button" class="modal-close-btn" data-close-modal aria-label="Close modal">✕</button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-para"><strong>"Know your exam situation before your exam knows you."</strong></p>
+                <p class="modal-para">Built for students who want a fast, zero-nonsense check on whether their current revision pace is sufficient to survive finals.</p>
+                <p class="modal-para">Zero ads. Zero logins. All calculations happen locally inside your browser.</p>
+                <div class="creator-note">
+                    <span>Designed with extreme precision for modern web standards.</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-action" data-close-modal>Close</button>
+            </div>
+        </div>
     </div>
 
+    <!-- Toast Notification (Linear/Raycast style) -->
+    <div class="toast-wrapper" id="toast-container" aria-live="polite">
+        <div class="toast-box" id="app-toast" style="display: none;">
+            <span class="toast-icon" id="toast-icon">💀</span>
+            <div class="toast-message" id="toast-msg">Bro... you're literally using an exam calculator instead of studying. 💀</div>
+        </div>
+    </div>
+
+    <!-- JavaScript Application Logic -->
     <script src="script.js"></script>
 </body>
 </html>
